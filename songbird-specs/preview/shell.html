@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shell and shared song contract - Songbird specifications</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 24px; }
+    body { margin: 0; color: #213b31; background: #f4f7f4; font: 16px/1.65 "Segoe UI", Arial, sans-serif; }
+    a { color: #226a53; text-underline-offset: 3px; }
+    a:hover { color: #164d3b; }
+    :focus-visible { outline: 3px solid #226a53; outline-offset: 4px; }
+    .skip { position: absolute; top: -80px; left: 16px; padding: 8px 16px; background: #fff; z-index: 1; }
+    .skip:focus { top: 12px; }
+    header { padding: 18px 28px; border-bottom: 1px solid #d5dfd7; background: #fff; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { color: #213b31; font-size: 19px; font-weight: 700; text-decoration: none; }
+    .downloads { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; }
+    .layout { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 224px minmax(0, 1fr); gap: 40px; padding: 32px 28px 72px; }
+    aside { align-self: start; position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; padding: 0 6px 12px 0; font-size: 14px; }
+    .documents { display: flex; flex-direction: column; gap: 4px; }
+    .documents a { padding: 8px 10px; border-radius: 4px; text-decoration: none; }
+    .documents a:hover { background: #e5f0e8; }
+    .documents [aria-current="page"] { background: #226a53; color: #fff; font-weight: 600; }
+    aside h2 { margin: 26px 10px 10px; font-size: 14px; }
+    aside ol { padding: 0 10px; margin: 0; list-style: none; }
+    aside li { margin: 0 0 10px; }
+    aside li a { color: #405a49; }
+    main { min-width: 0; padding: 28px 36px 40px; background: #fff; border: 1px solid #d5dfd7; }
+    main h1 { margin: 0 0 20px; font-size: 30px; line-height: 1.25; letter-spacing: -.025em; text-wrap: balance; }
+    main h2 { margin: 44px 0 16px; font-size: 23px; line-height: 1.35; }
+    main h3 { margin: 30px 0 12px; font-size: 18px; line-height: 1.4; }
+    main p, main ul, main ol { max-width: 72ch; }
+    main p { margin: 0 0 16px; }
+    main li { margin-bottom: 9px; }
+    main code { font: .9em/1.5 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+    main pre { max-width: 100%; padding: 18px; background: #f4f7f4; border: 1px solid #d5dfd7; overflow: auto; }
+    main pre code { overflow-wrap: normal; }
+    .table-scroll { max-width: 100%; overflow-x: auto; margin: 18px 0 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.55; }
+    th, td { padding: 10px 12px; text-align: left; vertical-align: top; border: 1px solid #d5dfd7; }
+    th { background: #e5f0e8; font-weight: 600; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px 40px; }
+      aside { position: static; max-height: none; padding: 0; }
+      .documents { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+      aside .page-nav { display: none; }
+      main { padding: 24px; }
+    }
+    @media (max-width: 540px) {
+      header { padding: 16px; }
+      main { padding: 22px 16px; }
+      main h1 { font-size: 26px; }
+      main h2 { font-size: 21px; }
+      th, td { padding: 8px; min-width: 110px; }
+    }
+    @media print {
+      body { background: #fff; color: #000; font-size: 11pt; }
+      header, aside, .skip { display: none; }
+      .layout { display: block; max-width: none; padding: 0; }
+      main { border: 0; padding: 0; }
+      main h2, main h3 { break-after: avoid; }
+      tr, pre { break-inside: avoid; }
+      .table-scroll { overflow: visible; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to specification</a>
+  <header>
+    <a class="brand" href="shell.html">Songbird / Specifications</a>
+    <div class="downloads">
+      <a href="shell.md" download>Download this Markdown file</a>
+      <a href="Songbird-Specifications.zip" download>Download all three specs</a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <nav class="documents" aria-label="Specifications"><a href="shell.html" aria-current="page">Shell</a>
+<a href="chord-finder.html">Chord Finder</a>
+<a href="harmonizer.html">Harmonizer</a></nav>
+      <nav class="page-nav" aria-label="On this page">
+        <h2>On this page</h2>
+        <ol><li><a href="#1-purpose-and-ownership">1. Purpose and ownership</a></li>
+<li><a href="#2-mvp-scope">2. MVP scope</a></li>
+<li><a href="#3-user-experience">3. User experience</a></li>
+<li><a href="#4-shared-song-contract">4. Shared song contract</a></li>
+<li><a href="#5-timing-rules">5. Timing rules</a></li>
+<li><a href="#6-shared-capability-interfaces">6. Shared capability interfaces</a></li>
+<li><a href="#7-state-persistence-and-recovery">7. State, persistence, and recovery</a></li>
+<li><a href="#8-learning-contract">8. Learning contract</a></li>
+<li><a href="#9-accessibility-and-trust">9. Accessibility and trust</a></li>
+<li><a href="#10-acceptance-scenarios">10. Acceptance scenarios</a></li>
+<li><a href="#11-open-decisions-and-handoff">11. Open decisions and handoff</a></li></ol>
+      </nav>
+    </aside>
+    <main id="content">
+<h1 id="songbird-shell-and-shared-song-contract">Songbird: Shell and shared song contract</h1>
+<p><strong>Status:</strong> Draft v0.1 for team planning<br />
+<strong>Updated:</strong> 2026-09-14<br />
+<strong>Related specs:</strong> <a href="chord-finder.html">Chord Finder</a> | <a href="harmonizer.html">Harmonizer</a></p>
+<h2 id="1-purpose-and-ownership">1. Purpose and ownership</h2>
+<p>Songbird helps everyday songwriters develop musical ideas and learn the practical theory behind their choices. The Shell connects the tools around one current song. It is not a separate music generator.</p>
+<p>The Shell owns project identity, navigation, shared song state, local recovery, and access to learning content. The two musical tools read and update that shared state rather than maintaining competing copies.</p>
+<p>The <a href="chord-finder.html">Chord Finder</a> builds the backing progression. The <a href="harmonizer.html">Harmonizer</a> turns a reviewed melody into editable additional parts, with or without a chord progression.</p>
+<h3 id="requirement-status">Requirement status</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Required</td>
+<td>Part of the agreed MVP behavior.</td>
+</tr>
+<tr>
+<td>Proposed contract</td>
+<td>A concrete engineering baseline for contributors to review together. Changes must be reflected in all three specs.</td>
+</tr>
+<tr>
+<td>Open decision</td>
+<td>Not yet settled. Do not present the choice as agreed or an implemented capability.</td>
+</tr>
+<tr>
+<td>Future</td>
+<td>Explicitly outside the MVP.</td>
+</tr>
+</tbody>
+</table></div>
+<p>These documents specify intended behavior. They do not claim the current mockup implements it, or that transcription quality or performance has been established.</p>
+<h2 id="2-mvp-scope">2. MVP scope</h2>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Required behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SH-01</td>
+<td>Maintain one current song with an editable project name.</td>
+</tr>
+<tr>
+<td>SH-02</td>
+<td>Auto-save that current song locally and restore it after a refresh or reopening the app in the same browser.</td>
+</tr>
+<tr>
+<td>SH-03</td>
+<td>Provide navigation to Chord Finder, Harmonizer, and learning content without losing work.</td>
+</tr>
+<tr>
+<td>SH-04</td>
+<td>Let either musical tool be the starting point. Importing or recording an idea must not require a known key, chords, or tempo.</td>
+</tr>
+<tr>
+<td>SH-05</td>
+<td>Share one selected working phrase of up to eight bars between both tools. Retain longer source audio while the user selects the section to use.</td>
+</tr>
+<tr>
+<td>SH-06</td>
+<td>Make media capture, analysis, musical timing, and playback reusable capabilities instead of separate implementations in each tool.</td>
+</tr>
+<tr>
+<td>SH-07</td>
+<td>Preserve user work across musical-context changes and asynchronous processing.</td>
+</tr>
+<tr>
+<td>SH-08</td>
+<td>Keep educational help optional, contextual, and usable without an external video.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Future: accounts, cloud saving, a library of projects, multiple independent song sections, collaboration, full-song arranging, a full DAW, and native/plugin packaging.</p>
+<p>Local autosave is recovery for one song, not cloud backup. Clearing browser storage, changing devices, or some private-browsing behavior can remove access to it.</p>
+<h2 id="3-user-experience">3. User experience</h2>
+<h3 id="first-visit">First visit</h3>
+<p>Create an empty current song using an &quot;Untitled song&quot; display name. Let the user rename it and choose either tool. A blank name should retain an understandable untitled display state, not prevent music creation.</p>
+<p>The user can start with audio in either tool, or with a starting key in the Chord Finder. Timing is established when arranging or aligning the melody, not as a gate before capture.</p>
+<h3 id="moving-between-tools">Moving between tools</h3>
+<p>Returning to a tool restores its current stage and unfinished edits. The Harmonizer's &quot;Build chords&quot; action opens the Chord Finder with the current song and provides a return path to the melody or builder stage.</p>
+<p>An uploaded recording, selected phrase, confirmed key, and timing choices should not have to be entered twice. Unreviewed analysis remains visibly unreviewed when another tool uses it.</p>
+<p>Learning pages retain the originating tool and stage. Returning from help must not reset the project or restart playback unexpectedly.</p>
+<h3 id="replacing-the-current-song">Replacing the current song</h3>
+<p>There is no project library in the MVP. If a start-over action is provided, it replaces the current song only after clear confirmation. Replacing a recording within the same song is a separate action, governed by the change rules below.</p>
+<h2 id="4-shared-song-contract">4. Shared song contract</h2>
+<p>This section is the canonical cross-tool contract. Its field names describe concepts, not a required framework or exact implementation API.</p>
+<h3 id="shared-entities">Shared entities</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Entity</th>
+<th>Required information and rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SongProject</code></td>
+<td>Stable ID, schema version, current revision, display name, last successfully saved revision, and references to the shared entities below.</td>
+</tr>
+<tr>
+<td><code>SourceAudio</code></td>
+<td>Stable source ID, locally stored audio/blob reference, original filename when applicable, media type, duration, and capture/import origin. Do not infer the actual format only from the filename.</td>
+</tr>
+<tr>
+<td><code>SourceSelection</code></td>
+<td>Start and end in source seconds. The original source remains intact; selecting a phrase is not destructive cropping.</td>
+</tr>
+<tr>
+<td><code>AnalysisDraft</code></td>
+<td>Source/selection revision, detected notes in source seconds, candidate keys, and review flags. Candidate output is not an approved melody.</td>
+</tr>
+<tr>
+<td><code>ConfirmedKey</code></td>
+<td>Tonic pitch class and display spelling, plus starting key quality: major or natural minor. Detection candidates are stored separately from the user's choice.</td>
+</tr>
+<tr>
+<td><code>Timing</code></td>
+<td>Time-signature numerator/denominator, displayed tempo and pulse unit, normalized quarter-note tempo, and confirmation status.</td>
+</tr>
+<tr>
+<td><code>PhraseAlignment</code></td>
+<td>Mapping between source seconds and the musical timeline, including the source-time position assigned to musical tick zero.</td>
+</tr>
+<tr>
+<td><code>WorkingPhrase</code></td>
+<td>Musical length, constrained to no more than eight bars under the confirmed meter. Proposed length increments are half a bar.</td>
+</tr>
+<tr>
+<td><code>LeadMelody</code></td>
+<td>Stable note events on the musical grid, review/confirmation status, and the source/alignment revision from which they were derived.</td>
+</tr>
+<tr>
+<td><code>ChordSequence</code></td>
+<td>Ordered chord events with roots, qualities, spellings, start positions, and durations. An empty sequence is valid.</td>
+</tr>
+<tr>
+<td><code>HarmonySettings</code></td>
+<td>Scale/mode, arrangement style, part layout, voice ranges, and whether this arrangement uses chords or only key/scale context.</td>
+</tr>
+<tr>
+<td><code>HarmonyArrangement</code></td>
+<td>Separate generated/edited voices, protected notes, settings/input revisions, explanatory metadata, and current/stale status.</td>
+</tr>
+<tr>
+<td><code>MixState</code></td>
+<td>Mute/solo state for chord accompaniment, the lead, and each harmony voice; preview instrument selection.</td>
+</tr>
+<tr>
+<td><code>WorkspaceState</code></td>
+<td>Last tool/stage, recoverable editing drafts, and optional help-display preferences. Do not mix lesson fixtures into the current song.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The selected harmony scale can differ from the starting key's major/minor form. Store that choice as harmony configuration, not as a silent rewrite of the detected melody key or chord progression.</p>
+<h3 id="musical-event-types">Musical event types</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Proposed fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DetectedNote</code></td>
+<td><code>id</code>, <code>pitchMidi</code>, <code>startSeconds</code>, <code>durationSeconds</code>, optional amplitude, optional model-provided confidence, and review flags.</td>
+</tr>
+<tr>
+<td><code>NoteEvent</code></td>
+<td><code>id</code>, <code>pitchMidi</code>, <code>startTick</code>, <code>durationTick</code>, <code>velocity</code>, <code>origin</code>, optional <code>sourceNoteId</code>, and a protection flag for harmony edits.</td>
+</tr>
+<tr>
+<td><code>ChordEvent</code></td>
+<td><code>id</code>, <code>rootPitchClass</code>, <code>rootSpelling</code>, <code>qualityId</code>, <code>startTick</code>, <code>durationTick</code>.</td>
+</tr>
+<tr>
+<td><code>HarmonyVoice</code></td>
+<td>Stable voice ID, role such as <code>above-1</code> or <code>below-2</code>, note events, range, and links to explanatory facts.</td>
+</tr>
+</tbody>
+</table></div>
+<p>MIDI pitches are integers from 0 through 127. Proposed MIDI velocities are integers from 1 through 127; rests are gaps, not zero-velocity visible notes.</p>
+<p>Editable notes have nonnegative starts and positive durations. The approved lead and each individual harmony voice are monophonic. Ambiguous overlaps or quantization collisions require correction; do not silently discard one of the notes.</p>
+<p>Confidence is optional. Do not invent percentages or treat note amplitude as a calibrated measure of transcription confidence.</p>
+<h2 id="5-timing-rules">5. Timing rules</h2>
+<h3 id="proposed-timing-representation">Proposed timing representation</h3>
+<p>Use integer musical ticks with <strong>480 ticks per quarter note</strong>. A sixteenth note is <strong>120 ticks</strong>. Preserve source timings in seconds separately.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Meter</th>
+<th style="text-align: right;">Ticks per bar</th>
+<th style="text-align: right;">Sixteenth-note positions per bar</th>
+<th style="text-align: right;">Half-bar duration</th>
+<th>Displayed tempo pulse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4/4</td>
+<td style="text-align: right;">1920</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">960 ticks</td>
+<td>Quarter note</td>
+</tr>
+<tr>
+<td>3/4</td>
+<td style="text-align: right;">1440</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">720 ticks</td>
+<td>Quarter note</td>
+</tr>
+<tr>
+<td>6/8</td>
+<td style="text-align: right;">1440</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">720 ticks</td>
+<td>Dotted quarter note</td>
+</tr>
+</tbody>
+</table></div>
+<p>In 6/8, there are normally two dotted-quarter pulses per bar. For example, a display of 80 dotted-quarter pulses per minute corresponds to 120 quarter notes per minute in a MIDI tempo event. Exporters and audio scheduling must use the normalized value.</p>
+<p>3/4 and 6/8 have the same notated bar duration at an equal quarter-note tempo, but different beat grouping. The metronome, grid accents, tempo labels, and learning examples must reflect that difference.</p>
+<h3 id="alignment-and-editing">Alignment and editing</h3>
+<p>Record or import first. Before confirming an editable musical timeline, establish meter, tempo, and phrase alignment. Both tools must have access to these shared controls.</p>
+<p>The user can shift the whole detected phrase to place it on the grid. Tempo alone does not identify beat one. Preserve leading rests where intended. Notes that would fall before tick zero need explicit realignment or a revised phrase selection, not silent deletion.</p>
+<p>The finest editable grid is a sixteenth note. Snap note starts and ends to that grid, with a minimum positive duration of one grid step. Keep pre-quantization data for recovery. True triplets in simple meter, swing microtiming, and unrestricted rubato are outside this initial grid contract.</p>
+<p>Chord boundaries and durations use half-bar increments under the current meter. A sequence may be shorter than the working phrase while being edited. In chord-aware harmony mode it must cover the working phrase; see <a href="harmonizer.html#4-key-only-and-chord-aware-context">Harmonizer context rules</a>.</p>
+<h3 id="changes-after-arranging">Changes after arranging</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Required handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tempo</td>
+<td>Keep musical event positions unchanged and change scheduled playback speed. Original audio is not automatically time-stretched to match.</td>
+</tr>
+<tr>
+<td>Meter</td>
+<td>Preview/review the impact on bar boundaries, half-bar chord durations, and the eight-bar limit before committing a valid replacement layout. Never silently truncate or overwrite notes. The exact remapping policy is an open decision.</td>
+</tr>
+<tr>
+<td>Phrase selection or length</td>
+<td>Show affected material before applying. Retain source audio and provide a way back from the edit.</td>
+</tr>
+<tr>
+<td>Confirmed key</td>
+<td>Preserve note pitches and chord names. Mark dependent harmonies for review/regeneration.</td>
+</tr>
+<tr>
+<td>Harmony scale/mode</td>
+<td>Create a reversible harmony preview; do not modify the lead or chord sequence.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-shared-capability-interfaces">6. Shared capability interfaces</h2>
+<p>The Shell document owns these interface definitions, not necessarily their implementation. Capture, analysis, playback, and musical logic can live in a shared core used by both tools.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Inputs</th>
+<th>Outputs / guarantees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capture/import</td>
+<td>User-selected file or an explicit microphone action</td>
+<td>A local source reference or a visible error. Accept WAV/MP3 uploads; negotiate supported browser recording formats internally.</td>
+</tr>
+<tr>
+<td>Analyze melody</td>
+<td>Source reference and selected source-time window</td>
+<td>Detected note draft, candidate keys, and review flags, tagged with the input revision. No automatic replacement of confirmed music.</td>
+</tr>
+<tr>
+<td>Align and quantize</td>
+<td>Detected notes, timing, source alignment, and working phrase</td>
+<td>An editable note draft plus any collisions, out-of-bounds events, or corrections needing review.</td>
+</tr>
+<tr>
+<td>Schedule playback</td>
+<td>Musical events, timing, instrument, mix, and loop range</td>
+<td>One coordinated transport. Starting another audition stops or replaces the previous audition rather than stacking independent players.</td>
+</tr>
+<tr>
+<td>Commit project edit</td>
+<td>Current revision and a validated change</td>
+<td>New shared revision, dependency status updates, and a queued local save.</td>
+</tr>
+<tr>
+<td>Preview harmony</td>
+<td>Confirmed lead, musical context, settings, and protected notes</td>
+<td>A candidate arrangement or an explicit diagnostic. The current arrangement remains available.</td>
+</tr>
+<tr>
+<td>Export MIDI</td>
+<td>Explicitly selected voices and shared timing/origin</td>
+<td>Aligned MIDI files; playback mute/solo is not an export-selection rule.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Audio capture does not imply permission to send audio to a server. No remote audio transmission is assumed by this spec. Processing location remains an engineering decision; any server-based path needs an explicit privacy design and corresponding user-facing disclosure.</p>
+<h2 id="7-state-persistence-and-recovery">7. State, persistence, and recovery</h2>
+<h3 id="local-saving">Local saving</h3>
+<p>Persist source references/blobs, selections, confirmed music, recoverable drafts, settings, and the current tool/stage. A blob-capable local store such as IndexedDB is the proposed approach; do not put encoded recordings into small string-only storage.</p>
+<p>Show saving, saved, and save-failed states. &quot;Saved&quot; means the current revision has actually been committed to local storage. If saving fails, retain the in-memory work, explain that recovery after closing is unavailable, and keep relevant exports accessible.</p>
+<p>Refresh restores the latest saved work, including an unconfirmed melody draft. A processing job that cannot resume must be shown as interrupted/retryable, not falsely complete. Unlimited undo history across browser restarts is not an MVP promise.</p>
+<h3 id="processing-and-invalidation">Processing and invalidation</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Required result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A new recording is captured</td>
+<td>Keep the existing confirmed melody until the replacement draft is accepted.</td>
+</tr>
+<tr>
+<td>Analysis finishes after its source or selection changed</td>
+<td>Ignore the stale result and retain the newer work.</td>
+</tr>
+<tr>
+<td>A source is unavailable or undecodable</td>
+<td>Show the failure and offer another file or recording; do not substitute sample music as if analysis succeeded.</td>
+</tr>
+<tr>
+<td>A confirmed melody or chord sequence changes</td>
+<td>Keep existing harmonies but mark them stale. Do not silently regenerate over edits.</td>
+</tr>
+<tr>
+<td>A scale/style/layout preview is rejected</td>
+<td>Keep the current arrangement and protected edits unchanged.</td>
+</tr>
+<tr>
+<td>A layout removes a manually edited voice</td>
+<td>Make the removal explicit before applying; preserve a rollback route.</td>
+</tr>
+<tr>
+<td>A generated result cannot satisfy hard constraints</td>
+<td>Explain the constraint and possible changes. Do not silently return fewer parts or transpose the lead.</td>
+</tr>
+</tbody>
+</table></div>
+<p>For the initial demo, assume one active editing tab. The team must choose how to detect and warn about concurrent tabs before broader use.</p>
+<h2 id="8-learning-contract">8. Learning contract</h2>
+<p>Education is part of making a musical choice, not an admission test. A user can complete the creative workflow without opening a lesson.</p>
+<h3 id="three-layers">Three layers</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Required pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contextual explanation</td>
+<td>A short, optional explanation attached to the selected chord, note, or setting. Use the user's current musical context when it exists.</td>
+</tr>
+<tr>
+<td>Try and compare</td>
+<td>A small optional activity using playback and editing, with a reversible comparison. Do not grade musical taste as right/wrong.</td>
+</tr>
+<tr>
+<td>Learning page</td>
+<td>Plain-language explanation, an audible example, one action to try, and a return link to the originating tool/stage.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="initial-learning-topics">Initial learning topics</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Topic ID / proposed route</th>
+<th>Content</th>
+<th>Primary entry points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>keys</code> / <code>/learn/keys</code></td>
+<td>Tonal center, scale versus key, ambiguity in short melodies, and choosing a key by listening</td>
+<td>Key review in either tool</td>
+</tr>
+<tr>
+<td><code>rhythm</code> / <code>/learn/rhythm</code></td>
+<td>Tempo, pulse, 4/4 versus 3/4 versus 6/8, bars, subdivisions, and quantization</td>
+<td>Timing controls and melody alignment</td>
+</tr>
+<tr>
+<td><code>chords</code> / <code>/learn/chords-and-voicings</code></td>
+<td>Chord tones, chord quality, duration, voicing versus instrument sound</td>
+<td>Chord Finder</td>
+</tr>
+<tr>
+<td><code>harmony</code> / <code>/learn/harmony</code></td>
+<td>Intervals, additional voices, chord/non-chord tones, and intentional tension</td>
+<td>Harmony builder and note inspection</td>
+</tr>
+<tr>
+<td><code>scales</code> / <code>/learn/scales-and-modes</code></td>
+<td>Major/minor, the standard modes, harmonic minor, fixed/jazz melodic minor, and comparisons</td>
+<td>Scale/mode selector</td>
+</tr>
+</tbody>
+</table></div>
+<p>A non-chord tone is a general category; a passing tone is one particular kind. When no chord progression is supplied, explanations must use intervals and scale degrees rather than inventing an implied backing chord.</p>
+<p>Explanations about generated notes must be based on structured musical facts from the arrangement, not an invented after-the-fact justification. Rich harmonic interpretation is optional; accurate simple facts are sufficient for MVP.</p>
+<p>Lesson audio uses isolated examples or a reversible preview. It must not overwrite the current song, and it must not play over a second song transport. Recorded educational videos are not required.</p>
+<h3 id="existing-creator-video-links">Existing-creator video links</h3>
+<p>Videos are optional links to existing material from other creators, not a requirement to produce Songbird videos. Attribute the creator, label the destination as external, and prefer captioned material. Do not copy or re-host the videos.</p>
+<p>The written explanation, audio example, and exercise must stand on their own. Curate and recheck links during content review; remove or replace known dead links. The MVP does not need a YouTube account/API integration, embedded player, or automated link-monitoring service.</p>
+<p>No specific videos are selected by these specs.</p>
+<h2 id="9-accessibility-and-trust">9. Accessibility and trust</h2>
+<p>All navigation, note/chord editing, playback controls, and mute/solo actions need keyboard-operable equivalents and understandable labels. Notes cannot depend only on color to communicate voice, selection, or musical role.</p>
+<p>Microphone denial, decoding failures, interrupted analysis, unavailable instrument assets, and local save failures must have visible recovery paths. The app must not quietly fall back to demo content or claim an action completed when it did not.</p>
+<p>Learning links and external videos must not discard a draft. Audio starts through an intentional user action.</p>
+<h2 id="10-acceptance-scenarios">10. Acceptance scenarios</h2>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Scenario and expected outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SH-A1</td>
+<td>Start in either tool, rename the song, navigate away and back: the name and work remain.</td>
+</tr>
+<tr>
+<td>SH-A2</td>
+<td>Refresh after a successful save: source, selected phrase, melody/chords/parts, settings, and stage are restored.</td>
+</tr>
+<tr>
+<td>SH-A3</td>
+<td>Capture in Chord Finder, then open Harmonizer: the same source and analysis draft are available without re-uploading.</td>
+</tr>
+<tr>
+<td>SH-A4</td>
+<td>Skip chords in Harmonizer: timing and key can be confirmed and key/scale-only generation remains available.</td>
+</tr>
+<tr>
+<td>SH-A5</td>
+<td>Select part of a longer recording: both tools use the same phrase of no more than eight bars; the original recording remains available.</td>
+</tr>
+<tr>
+<td>SH-A6</td>
+<td>Replace audio while analysis is running: the old result cannot overwrite the new selection.</td>
+</tr>
+<tr>
+<td>SH-A7</td>
+<td>Change a chord after editing a harmony: the harmony is marked stale but the edit is retained.</td>
+</tr>
+<tr>
+<td>SH-A8</td>
+<td>Compare 3/4 and 6/8: subdivisions, beat accents, tempo labels, and exported timing agree with the timing table.</td>
+</tr>
+<tr>
+<td>SH-A9</td>
+<td>Open a lesson or an unavailable external video and return: the song remains usable and unchanged.</td>
+</tr>
+<tr>
+<td>SH-A10</td>
+<td>Local storage fails: the UI does not show &quot;Saved&quot;; in-memory work and an explicit recovery explanation remain.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="11-open-decisions-and-handoff">11. Open decisions and handoff</h2>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Decision</th>
+<th>Proposed owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPEN-AUDIO</td>
+<td>Local versus server inference, supported browser/device matrix, recording codecs, maximum upload bytes, and maximum source duration</td>
+<td>Audio and platform contributors</td>
+</tr>
+<tr>
+<td>OPEN-SOUNDS</td>
+<td>Licensed guitar/piano soundfont or sample assets, loading strategy, and default playback voicings</td>
+<td>Audio contributor</td>
+</tr>
+<tr>
+<td>OPEN-RHYTHM</td>
+<td>Exact meter-change remapping policy and practical tempo limits</td>
+<td>Shared-core and musical-logic contributors</td>
+</tr>
+<tr>
+<td>OPEN-CHORDS</td>
+<td>Chord quality vocabulary beyond the proposed major/minor triad baseline</td>
+<td>Chord Finder and musical-logic contributors</td>
+</tr>
+<tr>
+<td>OPEN-HARMONY</td>
+<td>Exact style behavior, voice-range defaults, and constraint priorities</td>
+<td>Harmonizer and musical-logic contributors</td>
+</tr>
+<tr>
+<td>OPEN-STORAGE</td>
+<td>Storage schema/migrations, quota behavior, and concurrent-tab protection</td>
+<td>Shell contributor</td>
+</tr>
+<tr>
+<td>OPEN-LEARNING</td>
+<td>Review the original explanations/examples and curate optional existing-creator video links</td>
+<td>Product/learning-content contributor</td>
+</tr>
+</tbody>
+</table></div>
+<p>Agree the shared data and timing contract before implementing separate screens. Use the two tool specs for feature-specific behavior. Keep changes to shared fields and dependency rules synchronized across all three documents.</p>
+
+    </main>
+  </div>
+</body>
+</html>

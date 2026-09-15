@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harmonizer - Songbird specifications</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 24px; }
+    body { margin: 0; color: #213b31; background: #f4f7f4; font: 16px/1.65 "Segoe UI", Arial, sans-serif; }
+    a { color: #226a53; text-underline-offset: 3px; }
+    a:hover { color: #164d3b; }
+    :focus-visible { outline: 3px solid #226a53; outline-offset: 4px; }
+    .skip { position: absolute; top: -80px; left: 16px; padding: 8px 16px; background: #fff; z-index: 1; }
+    .skip:focus { top: 12px; }
+    header { padding: 18px 28px; border-bottom: 1px solid #d5dfd7; background: #fff; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { color: #213b31; font-size: 19px; font-weight: 700; text-decoration: none; }
+    .downloads { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; }
+    .layout { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 224px minmax(0, 1fr); gap: 40px; padding: 32px 28px 72px; }
+    aside { align-self: start; position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; padding: 0 6px 12px 0; font-size: 14px; }
+    .documents { display: flex; flex-direction: column; gap: 4px; }
+    .documents a { padding: 8px 10px; border-radius: 4px; text-decoration: none; }
+    .documents a:hover { background: #e5f0e8; }
+    .documents [aria-current="page"] { background: #226a53; color: #fff; font-weight: 600; }
+    aside h2 { margin: 26px 10px 10px; font-size: 14px; }
+    aside ol { padding: 0 10px; margin: 0; list-style: none; }
+    aside li { margin: 0 0 10px; }
+    aside li a { color: #405a49; }
+    main { min-width: 0; padding: 28px 36px 40px; background: #fff; border: 1px solid #d5dfd7; }
+    main h1 { margin: 0 0 20px; font-size: 30px; line-height: 1.25; letter-spacing: -.025em; text-wrap: balance; }
+    main h2 { margin: 44px 0 16px; font-size: 23px; line-height: 1.35; }
+    main h3 { margin: 30px 0 12px; font-size: 18px; line-height: 1.4; }
+    main p, main ul, main ol { max-width: 72ch; }
+    main p { margin: 0 0 16px; }
+    main li { margin-bottom: 9px; }
+    main code { font: .9em/1.5 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+    main pre { max-width: 100%; padding: 18px; background: #f4f7f4; border: 1px solid #d5dfd7; overflow: auto; }
+    main pre code { overflow-wrap: normal; }
+    .table-scroll { max-width: 100%; overflow-x: auto; margin: 18px 0 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.55; }
+    th, td { padding: 10px 12px; text-align: left; vertical-align: top; border: 1px solid #d5dfd7; }
+    th { background: #e5f0e8; font-weight: 600; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px 40px; }
+      aside { position: static; max-height: none; padding: 0; }
+      .documents { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+      aside .page-nav { display: none; }
+      main { padding: 24px; }
+    }
+    @media (max-width: 540px) {
+      header { padding: 16px; }
+      main { padding: 22px 16px; }
+      main h1 { font-size: 26px; }
+      main h2 { font-size: 21px; }
+      th, td { padding: 8px; min-width: 110px; }
+    }
+    @media print {
+      body { background: #fff; color: #000; font-size: 11pt; }
+      header, aside, .skip { display: none; }
+      .layout { display: block; max-width: none; padding: 0; }
+      main { border: 0; padding: 0; }
+      main h2, main h3 { break-after: avoid; }
+      tr, pre { break-inside: avoid; }
+      .table-scroll { overflow: visible; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to specification</a>
+  <header>
+    <a class="brand" href="shell.html">Songbird / Specifications</a>
+    <div class="downloads">
+      <a href="harmonizer.md" download>Download this Markdown file</a>
+      <a href="Songbird-Specifications.zip" download>Download all three specs</a>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <nav class="documents" aria-label="Specifications"><a href="shell.html">Shell</a>
+<a href="chord-finder.html">Chord Finder</a>
+<a href="harmonizer.html" aria-current="page">Harmonizer</a></nav>
+      <nav class="page-nav" aria-label="On this page">
+        <h2>On this page</h2>
+        <ol><li><a href="#1-purpose-and-mvp-boundary">1. Purpose and MVP boundary</a></li>
+<li><a href="#2-user-flow">2. User flow</a></li>
+<li><a href="#3-melody-review-and-quantization">3. Melody review and quantization</a></li>
+<li><a href="#4-key-only-and-chord-aware-context">4. Key-only and chord-aware context</a></li>
+<li><a href="#5-harmony-controls-and-generation">5. Harmony controls and generation</a></li>
+<li><a href="#6-editing-comparison-and-playback">6. Editing, comparison, and playback</a></li>
+<li><a href="#7-midi-export">7. MIDI export</a></li>
+<li><a href="#8-inputs-outputs-and-shared-state-effects">8. Inputs, outputs, and shared-state effects</a></li>
+<li><a href="#9-educational-experience">9. Educational experience</a></li>
+<li><a href="#10-states-failures-and-acceptance-scenarios">10. States, failures, and acceptance scenarios</a></li>
+<li><a href="#11-implementation-handoff">11. Implementation handoff</a></li></ol>
+      </nav>
+    </aside>
+    <main id="content">
+<h1 id="songbird-harmonizer">Songbird: Harmonizer</h1>
+<p><strong>Status:</strong> Draft v0.1 for team planning<br />
+<strong>Updated:</strong> 2026-09-14<br />
+<strong>Related specs:</strong> <a href="shell.html">Shell and shared contract</a> | <a href="chord-finder.html">Chord Finder</a></p>
+<h2 id="1-purpose-and-mvp-boundary">1. Purpose and MVP boundary</h2>
+<p>The Harmonizer helps a songwriter turn a reviewed lead melody into additional parts they can hear, edit, understand, and take into a recording workflow.</p>
+<p>The input is one clean melodic line. The output is the original lead plus up to four added harmony voices. The songwriter remains in control of the notes; this is not synthesized singing or automatic full-song composition.</p>
+<h3 id="scope">Scope</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Required behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HZ-01</td>
+<td>Reuse the current melody/audio or accept WAV/MP3 upload and browser recording through shared capture.</td>
+</tr>
+<tr>
+<td>HZ-02</td>
+<td>Transcribe the line into an editable note draft, preserving the source and pre-quantization data.</td>
+</tr>
+<tr>
+<td>HZ-03</td>
+<td>Support key confirmation/override and musical alignment, with a finest grid of sixteenth notes.</td>
+</tr>
+<tr>
+<td>HZ-04</td>
+<td>Offer a Chord Finder handoff but also allow generation from key/scale alone.</td>
+</tr>
+<tr>
+<td>HZ-05</td>
+<td>Generate using the selected scale/mode, arrangement style, and one of the six specified part layouts.</td>
+</tr>
+<tr>
+<td>HZ-06</td>
+<td>Let the user edit separate harmony voices and preserve protected edits during regeneration.</td>
+</tr>
+<tr>
+<td>HZ-07</td>
+<td>Provide mute/solo for chord accompaniment, the original melody, and each harmony voice.</td>
+</tr>
+<tr>
+<td>HZ-08</td>
+<td>Provide optional explanations and learning activities based on the actual musical context.</td>
+</tr>
+<tr>
+<td>HZ-09</td>
+<td>Export individual voice MIDI files or one multitrack MIDI containing the melody/harmony voices.</td>
+</tr>
+<tr>
+<td>HZ-10</td>
+<td>Save current work through the Shell, including recoverable review drafts and accepted arrangements.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Future: live harmonization, separating a melody from a mixed recording, independent counterpoint rhythms, generated sung vocals, WAV/audio-guide export, full score engraving, unrestricted timing, and DAW plugin integration.</p>
+<p>The working phrase is the same shared range of up to eight bars used by the Chord Finder.</p>
+<h2 id="2-user-flow">2. User flow</h2>
+<h3 id="stage-1-bring-in-and-confirm-the-melody">Stage 1: Bring in and confirm the melody</h3>
+<ol>
+<li>Reuse the current source/lead or upload/record a new clean line.</li>
+<li>Select the working source section and analyze it.</li>
+<li>Review candidate keys and confirm or override the tonic and starting major/minor form.</li>
+<li>Establish shared meter, tempo, and beat-one alignment.</li>
+<li>Review the quantized melody in the piano roll, correcting notes as needed.</li>
+<li>Optionally visit the Chord Finder, then return without losing the draft.</li>
+<li>Confirm that the melody represents the intended phrase and continue.</li>
+</ol>
+<p>If a source or reviewed lead already exists, resume from it rather than asking for a duplicate recording.</p>
+<h3 id="stage-2-build-and-shape-harmony">Stage 2: Build and shape harmony</h3>
+<p>Choose scale/mode, style, and part layout. Generate or audition a candidate, edit notes, isolate voices, and compare alternatives. A candidate does not replace the accepted arrangement until it is applied.</p>
+<p>The central surface is a piano-roll editor. Chord accompaniment and voice mute/solo controls sit alongside it, with generation settings and optional explanations available without obscuring the music.</p>
+<h3 id="stage-3-export">Stage 3: Export</h3>
+<p>Choose which voices to export and whether to download separate MIDI files or one multitrack MIDI. Export the accepted note data, not a hidden draft or the currently soloed subset.</p>
+<p>The user can return to editing without losing the arrangement or export choices.</p>
+<h2 id="3-melody-review-and-quantization">3. Melody review and quantization</h2>
+<p>Use the <a href="shell.html#4-shared-song-contract">shared event types</a> and <a href="shell.html#5-timing-rules">timing rules</a>.</p>
+<h3 id="capture-and-analysis">Capture and analysis</h3>
+<p>WAV/MP3 are accepted upload formats. Browser recording may use a different negotiated internal format; that must not make the app reject its own recording.</p>
+<p>The MVP assumes one clean monophonic line, sung/hummed or played as a single melodic instrument. Mixed accompaniment and multiple simultaneous performers are outside scope.</p>
+<p>Transcription produces a draft, not a claim of perfect pitch or rhythm detection. Keep source seconds and the original recording so the user can listen, realign, or replace the take.</p>
+<h3 id="required-editing">Required editing</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Move pitch</td>
+<td>Edit by semitone with pointer and keyboard alternatives. Do not force a pitch into the chosen scale.</td>
+</tr>
+<tr>
+<td>Move timing</td>
+<td>Snap starts to the musical grid; the finest step is a sixteenth note.</td>
+</tr>
+<tr>
+<td>Resize</td>
+<td>Snap note ends; retain a positive duration of at least one grid step.</td>
+</tr>
+<tr>
+<td>Add/delete</td>
+<td>Allow correction of missed or spurious notes, with undo.</td>
+</tr>
+<tr>
+<td>Shift phrase</td>
+<td>Move the complete draft relative to the shared grid, not only individual notes.</td>
+</tr>
+<tr>
+<td>Re-record/replace</td>
+<td>Keep the existing melody until the replacement is reviewed and accepted.</td>
+</tr>
+<tr>
+<td>Compare with source</td>
+<td>Provide a reference audition without pretending unedited source audio has been time-stretched to match the grid.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Show collisions, overlaps, or out-of-range notes caused by snapping. Do not silently merge repeated notes, discard notes that snap to the same position, or truncate music beyond the selected phrase.</p>
+<p>A confirmed lead has nonnegative grid-aligned starts, positive grid-aligned durations, no unintended overlaps, and fits within the working phrase. A later deliberate lead edit invalidates dependent harmony generation but does not erase those harmonies.</p>
+<p>Provide a visible &quot;What is a key?&quot; link. Key confirmation changes interpretation and harmony context, not the recorded sound or existing melody pitches.</p>
+<h2 id="4-key-only-and-chord-aware-context">4. Key-only and chord-aware context</h2>
+<p>Chord Finder is optional. The two modes must be understandable in the UI and in educational explanations.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Inputs used</th>
+<th>Expected behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key/scale-only</td>
+<td>Confirmed tonic, selected harmony scale, lead, and arrangement settings</td>
+<td>Generate using scale relationships, intervals, voice movement, and range. Do not invent a hidden backing progression.</td>
+</tr>
+<tr>
+<td>Chord-aware</td>
+<td>The same inputs plus a valid timed chord sequence covering the phrase</td>
+<td>Also evaluate the explicit chords beneath the notes. Show chord accompaniment and chord-based explanations.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Offer &quot;Build chords&quot; as a helpful route, not an obligatory gate. Return from the <a href="chord-finder.html#2-entry-paths-and-user-flow">Chord Finder</a> with the same melody and settings intact.</p>
+<p>If chords cover only part of the phrase, show the coverage and offer completion or key/scale-only generation. Do not silently loop the sequence, sustain its last chord indefinitely, or use different undocumented fallbacks in uncovered bars.</p>
+<p>Explicit user-chosen chords take precedence over the harmony scale where their tones differ. The selected scale still guides other choices. Explain relevant out-of-scale chord tones rather than changing the chord or lead behind the user's back.</p>
+<p>The user may also deliberately compare a key-only arrangement against a chord-aware one. Label which context produced each result.</p>
+<h2 id="5-harmony-controls-and-generation">5. Harmony controls and generation</h2>
+<h3 id="scale--mode">Scale / mode</h3>
+<p>There is one scale/mode selector, not separate duplicate &quot;scale&quot; and &quot;mode&quot; menus.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Display name</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>major</code></td>
+<td>Major (Ionian)</td>
+<td>Standard major scale</td>
+</tr>
+<tr>
+<td><code>natural-minor</code></td>
+<td>Minor (Aeolian)</td>
+<td>Natural minor</td>
+</tr>
+<tr>
+<td><code>harmonic-minor</code></td>
+<td>Harmonic minor</td>
+<td>Minor with a raised seventh</td>
+</tr>
+<tr>
+<td><code>melodic-minor</code></td>
+<td>Melodic minor (fixed/jazz)</td>
+<td>Raised sixth and seventh in both directions</td>
+</tr>
+<tr>
+<td><code>dorian</code></td>
+<td>Dorian</td>
+<td>Standard mode of the major scale</td>
+</tr>
+<tr>
+<td><code>phrygian</code></td>
+<td>Phrygian</td>
+<td>Standard mode of the major scale</td>
+</tr>
+<tr>
+<td><code>lydian</code></td>
+<td>Lydian</td>
+<td>Standard mode of the major scale</td>
+</tr>
+<tr>
+<td><code>mixolydian</code></td>
+<td>Mixolydian</td>
+<td>Standard mode of the major scale</td>
+</tr>
+<tr>
+<td><code>locrian</code></td>
+<td>Locrian</td>
+<td>Standard mode of the major scale</td>
+</tr>
+</tbody>
+</table></div>
+<p>&quot;All the modes&quot; means the seven standard diatonic modes, with Ionian and Aeolian represented by major and natural minor, plus the two additional minor scales above. Modes of harmonic/melodic minor are future scope.</p>
+<p>The confirmed tonic is shared song context. The builder's scale choice can override the starting major/minor form for this harmony arrangement without rewriting the melody or progression.</p>
+<h3 id="part-layouts">Part layouts</h3>
+<p>Counts are derived from the layout; there is no separate count control that can contradict it.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Layout ID</th>
+<th>Display choice</th>
+<th style="text-align: right;">Above</th>
+<th style="text-align: right;">Below</th>
+<th style="text-align: right;">Added voices</th>
+<th style="text-align: right;">Total including lead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>one-below</code></td>
+<td>1 below</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td><code>one-above</code></td>
+<td>1 above</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td><code>one-each</code></td>
+<td>1 above and 1 below</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr>
+<td><code>two-above-one-below</code></td>
+<td>2 above and 1 below</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr>
+<td><code>one-above-two-below</code></td>
+<td>1 above and 2 below</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr>
+<td><code>two-each</code></td>
+<td>2 above and 2 below</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table></div>
+<p>Use stable voice roles: <code>lead</code>, <code>above-1</code>, <code>above-2</code>, <code>below-1</code>, and <code>below-2</code>. The first voice on either side is nearest the lead in generated arrangements.</p>
+<p>Newly generated above voices are above the lead, below voices are below it, and same-side generated voices retain their ordering. Manual edits remain the user's choice; an out-of-range or crossed-role edit can be indicated without silently moving it back.</p>
+<h3 id="arrangement-styles-and-ranges">Arrangement styles and ranges</h3>
+<p>Proposed starting styles are Close, Open, and Parallel. Close favors compact spacing, Open favors wider spacing, and Parallel favors consistent interval relationships and movement with the lead rather than blindly shifting every note by fixed semitones.</p>
+<p>Exact style rules, default ranges, and constraint priorities are <a href="shell.html#11-open-decisions-and-handoff">OPEN-HARMONY</a>. A style must have a real, explainable effect; a cosmetic label change is not an implemented style.</p>
+<p>Each generated voice has a defined range. Avoid gender-based assumptions. If the selected layout cannot fit the configured ranges, explain the problem and let the user change layout/ranges. Do not silently reduce the part count or move the lead.</p>
+<h3 id="generation-contract">Generation contract</h3>
+<p>Generate the voices jointly rather than making independent unrelated calls for each line.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Preserve the lead</td>
+<td>Generation does not change original note pitches, starts, or lengths.</td>
+</tr>
+<tr>
+<td>Share the lead's rhythm</td>
+<td>Initial harmony voices follow lead-note onsets and durations, including rests. Independent countermelodies are outside MVP.</td>
+</tr>
+<tr>
+<td>Consider musical context</td>
+<td>Use the selected tonic/scale and, in chord-aware mode, actual timed chords.</td>
+</tr>
+<tr>
+<td>Respect voice constraints</td>
+<td>Consider ranges, above/below roles, spacing, and movement between successive notes.</td>
+</tr>
+<tr>
+<td>Handle doubling intentionally</td>
+<td>Octave doubling can be valid. Avoid accidental identical voices presented as distinct useful parts.</td>
+</tr>
+<tr>
+<td>Preserve protected edits</td>
+<td>Treat protected manual notes as fixed. Surface conflicts rather than ignoring them.</td>
+</tr>
+<tr>
+<td>Explain facts accurately</td>
+<td>Return musical relationships that can support the learning UI.</td>
+</tr>
+</tbody>
+</table></div>
+<p>A held lead note may span a chord change. Consider the entire sounding interval rather than only the chord at note onset. A harmony tone can become a deliberate non-chord tone later in that span; explain the relevant context. Automatically creating an independent harmony rhythm to conceal the conflict is not part of this initial contract.</p>
+<h2 id="6-editing-comparison-and-playback">6. Editing, comparison, and playback</h2>
+<h3 id="safe-regeneration">Safe regeneration</h3>
+<p>Selecting a different scale/mode automatically prepares a new harmony preview so the user can hear the difference. Style and layout changes should follow the same reversible pattern.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Required behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Preview settings</td>
+<td>Retain the accepted arrangement while producing the candidate. Show which settings are being previewed.</td>
+</tr>
+<tr>
+<td>Compare A/B</td>
+<td>Use the same lead, chords, tempo, and phrase where possible, so the audible difference reflects the selected change.</td>
+</tr>
+<tr>
+<td>Apply preview</td>
+<td>Commit the candidate and settings together, then auto-save through the Shell.</td>
+</tr>
+<tr>
+<td>Cancel/reject</td>
+<td>Keep the accepted notes, settings, and protected edits.</td>
+</tr>
+<tr>
+<td>Edit a harmony note</td>
+<td>Save the edit and protect it from later regeneration by default. Provide an explicit way to release that protection.</td>
+</tr>
+<tr>
+<td>Change layout</td>
+<td>Make removal of an edited voice explicit before applying the new layout.</td>
+</tr>
+<tr>
+<td>Undo</td>
+<td>Restore the prior accepted edit/arrangement without automatically starting audio.</td>
+</tr>
+<tr>
+<td>Change source context during generation</td>
+<td>Reject the stale result rather than applying it to newer song data.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Protected notes may remain outside the newly selected scale, range, or intended above/below role. Identify that condition without treating the user's musical choice as a software error. Newly generated material must not silently overwrite it.</p>
+<p>The user can return to melody review to edit the lead. Those changes mark harmony material for review; they do not cause silent replacement.</p>
+<h3 id="piano-roll-and-mixer">Piano roll and mixer</h3>
+<p>Show the original melody and every active harmony voice as distinguishable editable musical data. Keep a visible grid and, in chord-aware mode, the relevant chord context.</p>
+<p>The mixer includes chord accompaniment, original melody, and each active harmony voice. Here, &quot;backing track&quot; means the chord accompaniment, not a separately uploaded full-band recording.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Proposed behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mute</td>
+<td>Exclude that source from preview playback without deleting it.</td>
+</tr>
+<tr>
+<td>Solo</td>
+<td>When any sources are soloed, play the soloed sources only. Multiple solos can be combined; mute still takes precedence.</td>
+</tr>
+<tr>
+<td>Clear solos</td>
+<td>Restore normal audition without requiring the user to find hidden active solos.</td>
+</tr>
+<tr>
+<td>Play/stop</td>
+<td>Use the shared transport and musical timeline.</td>
+</tr>
+<tr>
+<td>Loop</td>
+<td>Repeat the chosen phrase/range for comparison or practice.</td>
+</tr>
+<tr>
+<td>Slower practice</td>
+<td>Offer a playback-rate/tempo preview without rewriting saved note positions or exported project tempo.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The lead and harmony voices use piano for the initial preview. Chord accompaniment uses the guitar/piano choice shared from the Chord Finder. No sung-voice synthesis is implied.</p>
+<p>When there are no chords, show accompaniment as unavailable rather than silently adding a progression. Lesson audio and source-reference auditions must not stack on top of another active transport.</p>
+<h2 id="7-midi-export">7. MIDI export</h2>
+<h3 id="export-choices">Export choices</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Choice</th>
+<th>File contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Separate files</td>
+<td>One selected voice per MIDI file, with the shared timing metadata.</td>
+</tr>
+<tr>
+<td>Combined file</td>
+<td>One Standard MIDI File type 1 with separate named tracks for the selected melody/harmony voices, plus conductor metadata.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Default selection can include the lead and all current harmony voices. Let the user explicitly select fewer. Mute/solo controls affect listening, not export inclusion.</p>
+<p>Chord-accompaniment MIDI, source audio, rendered soundfonts, and WAV guides are outside this MVP export contract. MIDI carries note/performance information, not the piano/guitar audio itself.</p>
+<h3 id="timing-and-integrity">Timing and integrity</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Expected output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shared origin</td>
+<td>Every file starts from the same musical tick zero. Do not trim each part to its first sounding note.</td>
+</tr>
+<tr>
+<td>Preserved rests</td>
+<td>Leading silence, gaps, and intended note lengths remain.</td>
+</tr>
+<tr>
+<td>Shared duration</td>
+<td>Use the working phrase endpoint for end-of-track timing so separate parts retain a common range.</td>
+</tr>
+<tr>
+<td>Correct tempo</td>
+<td>Export normalized quarter-note tempo, including the dotted-quarter UI conversion for 6/8.</td>
+</tr>
+<tr>
+<td>Correct meter</td>
+<td>Include the selected time signature and appropriate metronome/pulse information.</td>
+</tr>
+<tr>
+<td>Separate voices</td>
+<td>Do not flatten the combined file into one indistinguishable note track.</td>
+</tr>
+<tr>
+<td>Current accepted data</td>
+<td>Include manual edits and the accepted arrangement, not a hidden candidate.</td>
+</tr>
+<tr>
+<td>Clear track names</td>
+<td>Identify the lead and above/below harmony roles. Sanitize download filenames without changing the displayed project name.</td>
+</tr>
+</tbody>
+</table></div>
+<p>MIDI's standard key-signature event does not represent every mode in this tool. Do not mislabel a modal arrangement as an incorrect major/minor key. A text description of tonic/scale is acceptable; tempo, meter, note data, and track separation are the required interoperability contract.</p>
+<p>If settings or chords changed after the current arrangement was made, make that status visible before export. The user can deliberately keep their edited notes; do not force regeneration as a condition of authorship. Invalid event data still needs correction before a valid file can be produced.</p>
+<h2 id="8-inputs-outputs-and-shared-state-effects">8. Inputs, outputs, and shared-state effects</h2>
+<p>Use the <a href="shell.html#4-shared-song-contract">canonical shared entities</a>.</p>
+<h3 id="inputs">Inputs</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current song and revision</td>
+<td>Always</td>
+</tr>
+<tr>
+<td>Source audio and selection</td>
+<td>Analyzing a new lead; not required to re-upload when data already exists</td>
+</tr>
+<tr>
+<td>Analysis/alignment draft</td>
+<td>During transcription and melody review</td>
+</tr>
+<tr>
+<td>Confirmed musical timing</td>
+<td>Before confirming the grid and generating an arrangement</td>
+</tr>
+<tr>
+<td>Confirmed tonic/key</td>
+<td>Before key/scale-based generation</td>
+</tr>
+<tr>
+<td>Confirmed lead notes</td>
+<td>Before generation</td>
+</tr>
+<tr>
+<td>Timed chord events</td>
+<td>Only in chord-aware mode</td>
+</tr>
+<tr>
+<td>Harmony scale, style, layout, and ranges</td>
+<td>Before generation</td>
+</tr>
+<tr>
+<td>Protected notes and accepted arrangement</td>
+<td>When regenerating an edited arrangement</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="outputs">Outputs</h3>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Consumers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shared source/analysis and corrected lead</td>
+<td>Shell, Chord Finder, future tools</td>
+</tr>
+<tr>
+<td>Confirmed key/timing/alignment</td>
+<td>Both tools</td>
+</tr>
+<tr>
+<td>Accepted harmony settings and separate voice notes</td>
+<td>Shell, playback, export</td>
+</tr>
+<tr>
+<td>Candidate arrangement and diagnostics</td>
+<td>Builder preview UI</td>
+</tr>
+<tr>
+<td>Structured explanatory facts</td>
+<td>Note inspection and learning UI</td>
+</tr>
+<tr>
+<td>Mix/practice settings</td>
+<td>Playback and workspace recovery</td>
+</tr>
+<tr>
+<td>MIDI files</td>
+<td>User download/recording workflow</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="explanatory-metadata">Explanatory metadata</h3>
+<p>For a selected generated note, return the reference lead note, interval relationship, selected scale membership, applicable chord events, and chord membership when known. Passing/neighbor-tone labels are optional and require the relevant melodic context.</p>
+<p>When no chords exist, chord membership is not applicable, not &quot;false&quot; and not inferred from an undisclosed chord.</p>
+<p>One illustrative fact record:</p>
+<pre><code class="language-json">{
+  &quot;voiceId&quot;: &quot;above-1&quot;,
+  &quot;leadNoteId&quot;: &quot;lead-12&quot;,
+  &quot;harmonyNoteId&quot;: &quot;harmony-12&quot;,
+  &quot;leadPitchMidi&quot;: 64,
+  &quot;harmonyPitchMidi&quot;: 67,
+  &quot;intervalSemitones&quot;: 3,
+  &quot;activeChordIds&quot;: [&quot;chord-1&quot;],
+  &quot;chordMembership&quot;: &quot;member&quot;,
+  &quot;scaleMembership&quot;: &quot;member&quot;
+}
+</code></pre>
+<p>With E as the lead, G as the harmony, and a current C major chord, the UI can explain the minor third above E and membership in C-E-G. It must not claim a voice-leading reason unless the generation result actually supports that reason.</p>
+<h2 id="9-educational-experience">9. Educational experience</h2>
+<p>Use the <a href="shell.html#8-learning-contract">shared learning topics and video policy</a>.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Educational behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key review</td>
+<td>Explain tonal center, uncertainty, and manual confirmation through &quot;What is a key?&quot;</td>
+</tr>
+<tr>
+<td>Melody alignment</td>
+<td>Explain the grid and how quantization changes timing. Let the user compare with the source.</td>
+</tr>
+<tr>
+<td>Selected harmony note</td>
+<td>Offer &quot;Why this note?&quot; using its real interval, scale, and chord context.</td>
+</tr>
+<tr>
+<td>Scale/mode selector</td>
+<td>Compare arrangements while retaining the lead and chords, making the scope of the change explicit.</td>
+</tr>
+<tr>
+<td>Chord/non-chord explanation</td>
+<td>Distinguish membership from correctness; non-chord tones can create intentional motion or tension.</td>
+</tr>
+<tr>
+<td>Export stage</td>
+<td>Explain that MIDI is editable note information and can sound different in another instrument/DAW.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="small-optional-activity">Small optional activity</h3>
+<p>For a short phrase, let the user try placing one harmony note before revealing a suggestion. Audition their choice alone, with the lead, and with chords if supplied. Then compare with the suggestion and inspect the musical relationships.</p>
+<p>Do not require the exercise before generating parts. Do not score one musically valid choice as wrong merely because it differs from the generator.</p>
+<p>Another useful comparison changes only the harmony scale or one edited note, with undo and A/B playback. Avoid unrelated random changes that make it impossible to hear what the selected control did.</p>
+<p>Links to existing creators' videos are optional supplemental resources. The explanation and exercise remain usable without them; this spec does not require producing videos.</p>
+<h2 id="10-states-failures-and-acceptance-scenarios">10. States, failures, and acceptance scenarios</h2>
+<p>Required states include empty, recording, analyzing, melody-needs-review, confirmed melody, generating preview, ready preview, accepted arrangement, stale arrangement, and export error.</p>
+<p>Show explicit recovery for microphone denial, unsupported/undecodable media, uncertain key, transcription collisions, out-of-phrase notes, insufficient chord coverage, infeasible voice constraints, unavailable sounds, interrupted work, and failed local saves.</p>
+<div class="table-scroll" role="region" aria-label="Specification table" tabindex="0"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Scenario and expected outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HZ-A1</td>
+<td>Enter from Chord Finder: reuse the same recording, selected phrase, key, timing, and chords.</td>
+</tr>
+<tr>
+<td>HZ-A2</td>
+<td>Start with no chords: confirm key/timing and generate in key/scale-only mode without visiting Chord Finder.</td>
+</tr>
+<tr>
+<td>HZ-A3</td>
+<td>Override the detected key: source and existing melody pitches remain unchanged.</td>
+</tr>
+<tr>
+<td>HZ-A4</td>
+<td>Correct notes in each supported meter: starts/ends align to the shared grid and no note is silently erased by quantization.</td>
+</tr>
+<tr>
+<td>HZ-A5</td>
+<td>Select each of the six layouts: added and total voice counts match the table, including four added plus one lead for <code>two-each</code>.</td>
+</tr>
+<tr>
+<td>HZ-A6</td>
+<td>Request an infeasible layout/range: receive an explanation, not fewer voices or a transposed lead.</td>
+</tr>
+<tr>
+<td>HZ-A7</td>
+<td>Change scale after protecting a note: the note survives the preview; the lead and chords remain unchanged.</td>
+</tr>
+<tr>
+<td>HZ-A8</td>
+<td>Reject a generated preview: the accepted arrangement and settings remain intact.</td>
+</tr>
+<tr>
+<td>HZ-A9</td>
+<td>Change source data during generation: the stale result cannot replace newer work.</td>
+</tr>
+<tr>
+<td>HZ-A10</td>
+<td>Mute/solo several sources: playback follows the defined mixer rule while note data and export selection remain intact.</td>
+</tr>
+<tr>
+<td>HZ-A11</td>
+<td>Inspect a note without chords: explain intervals/scale membership without inventing chord membership.</td>
+</tr>
+<tr>
+<td>HZ-A12</td>
+<td>Export separately and combined: manual edits, track identities, tempo/meter, leading rests, and common timing are preserved.</td>
+</tr>
+<tr>
+<td>HZ-A13</td>
+<td>Export 6/8: normalized quarter-note tempo matches the displayed dotted-quarter pulse.</td>
+</tr>
+<tr>
+<td>HZ-A14</td>
+<td>Refresh after saving a review draft or accepted arrangement: restore it through the Shell without requiring a new recording.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="11-implementation-handoff">11. Implementation handoff</h2>
+<p>Use shared capture/analysis/timing/playback interfaces from <a href="shell.html#6-shared-capability-interfaces">Shell</a>. Consume the Chord Finder's timed events rather than parsing its displayed labels or keeping a second progression.</p>
+<p>Define style behavior, voice ranges, protected-note conflicts, and musical-quality examples with the musical-logic contributor before calling the generator complete. Initial input limits and supported runtimes remain in the <a href="shell.html#11-open-decisions-and-handoff">shared open-decision register</a>.</p>
+<p>Keep the working editor, useful single-part path, and reliable data/export behavior central while expanding to all six layouts. Do not present the broader music-learning vision as a reason to add unrelated composition features to this MVP.</p>
+
+    </main>
+  </div>
+</body>
+</html>

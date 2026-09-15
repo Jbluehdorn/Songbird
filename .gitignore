@@ -1,0 +1,11 @@
+# Local credentials and machine-specific configuration.
+.env
+.env.*
+!.env.example
+
+# Dependencies and transient output.
+node_modules/
+*.log
+songbird-kickoff/layout-report.json
+Thumbs.db
+.DS_Store

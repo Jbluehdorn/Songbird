@@ -1,0 +1,34 @@
+SECOND VOICE - EDITABLE UI MOCKUP
+
+These are SVG artboards, not a native .fig project.
+No Figma account connection or cloud upload was performed.
+
+Import into Figma:
+1. Create or open a Figma Design file.
+2. Drag the four SVG files onto the design canvas.
+3. Ungroup a screen to edit its text, colors, notes, and controls.
+4. If desired, put each imported screen in a 1440 x 980 frame.
+
+Screens:
+01-song-setup.svg         Tempo, tonal center, scale, timed chords, capture.
+02-melody-review.svg      Best-effort note transcription and correction.
+03-harmony-workspace.svg  Original lead plus four added harmony parts.
+04-learn-my-part.svg      Part isolation, slower playback, fading guide.
+
+The SVGs contain native text and vector shapes, not flattened screenshots.
+They do not contain Figma Auto Layout, component variants, or prototype wiring.
+Segoe UI is the specified font, with Arial as a fallback.
+
+The example song, notes, take information, and arrangement are illustrative.
+The browser preview includes navigation, note dragging, part count, mute/solo,
+and simple synthesizer playback. It does not record or transcribe audio,
+generate harmonies, or export MIDI/audio. Export buttons on the app frames
+illustrate planned features; "Save this SVG" downloads the actual design.
+
+Musical scope:
+- Configure tempo and timed chords before adding a melody.
+- Correct detected notes in a piano roll; re-record as an alternative.
+- Root plus scale/mode, including fixed/jazz melodic minor.
+- One original lead and one to four added harmony lines.
+- Arrangement style is separate from scale/mode.
+- Original lead is not automatically retuned when the scale changes.

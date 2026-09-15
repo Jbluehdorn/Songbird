@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Second Voice - UI mockup</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #21332f; background: #e8eeea; font: 14px/1.5 "Segoe UI", Arial, sans-serif; }
+    button, select, input { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    button, select { cursor: pointer; }
+    :focus-visible { outline: 3px solid #226a53; outline-offset: 3px; }
+    .preview-header { padding: 20px 28px 16px; background: #fff; border-bottom: 1px solid #cdd8d0; }
+    .heading-row { display: flex; gap: 16px; align-items: center; justify-content: space-between; }
+    h1 { margin: 0; font-size: 21px; letter-spacing: -.025em; }
+    .description { margin: 5px 0 0; color: #586e60; font-size: 13px; max-width: 80ch; }
+    .utility { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .utility a { color: #225e48; font-weight: 600; text-underline-offset: 4px; font-size: 12px; }
+    .toolbar { display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-top: 18px; }
+    nav { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tab { border: 1px solid transparent; border-radius: 6px; color: #536b5c; background: transparent; padding: 8px 13px; font-size: 13px; }
+    .tab:hover { background: #eef3ef; }
+    .tab[aria-selected="true"] { border-color: #ceded2; color: #205c45; background: #e8f1eb; font-weight: 650; }
+    .tools { display: flex; gap: 7px; align-items: center; flex-shrink: 0; }
+    .small-button { background: #fff; color: #314d3c; padding: 7px 11px; border: 1px solid #bdcec1; border-radius: 6px; font-size: 12px; }
+    .small-button:hover { background: #eaf1ec; }
+    .small-button.active { color: #fff; background: #226a53; border-color: #226a53; }
+    #viewport { padding: 22px 28px 26px; overflow: auto; }
+    #artboard { width: min(1440px, 100%); margin: 0 auto; background: #fff; border: 1px solid #bfcdc3; border-radius: 6px; box-shadow: 0 10px 25px #0000000d; overflow: hidden; }
+    #artboard svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+    #viewport.actual #artboard { width: 1440px; max-width: none; }
+    .caption { max-width: 1440px; margin: 0 auto; padding: 0 28px 28px; color: #52685b; display: flex; gap: 14px; justify-content: space-between; flex-wrap: wrap; }
+    .caption p { margin: 0; max-width: 88ch; font-size: 12px; }
+    #toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 40px); padding: 12px 18px; border: 1px solid #789984; border-radius: 8px; background: #fafffa; color: #244a35; box-shadow: 0 8px 28px #0000001a; z-index: 10; }
+    #toast:empty { display: none; }
+    dialog { width: min(440px, calc(100vw - 36px)); border: 1px solid #b1c3b6; border-radius: 12px; padding: 26px; color: #21332f; box-shadow: 0 22px 70px #00000035; }
+    dialog::backdrop { background: #172e2259; }
+    dialog h2 { margin: 0 0 12px; font-size: 21px; }
+    dialog p { font-size: 13px; color: #586e60; }
+    dialog label { display: block; margin: 15px 0 7px; font-weight: 600; font-size: 13px; }
+    dialog select, dialog input { padding: 10px; width: 100%; border: 1px solid #bbcabe; border-radius: 6px; color: #21332f; background: #fff; }
+    dialog .buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+    .primary { background: #226a53; color: #fff; border: 1px solid #226a53; border-radius: 6px; padding: 9px 16px; font-weight: 600; }
+    @media (max-width: 800px) {
+      .preview-header { padding: 16px; }
+      .heading-row, .toolbar { align-items: flex-start; flex-direction: column; gap: 12px; }
+      h1 { font-size: 19px; }
+      .toolbar { margin-top: 13px; }
+      .tools { align-self: flex-end; }
+      .tab { padding: 7px 9px; font-size: 12px; }
+      #viewport { padding: 14px 10px 18px; }
+      .caption { padding: 0 16px 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <!-- Functional desktop mockup. This viewer is not the production app or an AI transcription service. -->
+  <header class="preview-header">
+    <div class="heading-row">
+      <div>
+        <h1>Second Voice / a first look</h1>
+        <p class="description">A clickable desktop mockup, with editable SVG frames for Figma. The music is illustrative.</p>
+      </div>
+      <div class="utility">
+        <a href="exports/second-voice-figma-import.zip" download>Download Figma import pack</a>
+        <a href="exports/Figma-import.txt" target="_blank" rel="noopener">Import instructions</a>
+      </div>
+    </div>
+    <div class="toolbar">
+      <nav role="tablist" aria-label="Mockup screens">
+        <button class="tab" role="tab" id="tab-setup" data-screen="setup" aria-selected="false" aria-controls="artboard">1. Song setup</button>
+        <button class="tab" role="tab" id="tab-review" data-screen="review" aria-selected="false" aria-controls="artboard">2. Review melody</button>
+        <button class="tab" role="tab" id="tab-workspace" data-screen="workspace" aria-selected="true" aria-controls="artboard">3. Write harmonies</button>
+        <button class="tab" role="tab" id="tab-learn" data-screen="learn" aria-selected="false" aria-controls="artboard">4. Learn my part</button>
+      </nav>
+      <div class="tools">
+        <button id="fit" class="small-button active" aria-pressed="true">Fit</button>
+        <button id="actual" class="small-button" aria-pressed="false">100%</button>
+        <button id="download" class="small-button">Save this SVG</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div id="viewport"><div id="artboard" role="tabpanel" aria-labelledby="tab-workspace"></div></div>
+    <div class="caption">
+      <p id="screen-caption">Try the part count, mute/solo, note dragging, and Learn my part. Play uses a simple demo synth, not the final piano sound.</p>
+      <p>Recording, transcription, arrangement styles, and MIDI/audio export are illustrated, not implemented.</p>
+    </div>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <dialog id="settings-dialog" aria-labelledby="dialog-title">
+    <form id="settings-form">
+      <h2 id="dialog-title">Scale / mode</h2>
+      <p id="dialog-description"></p>
+      <label id="control-label" for="setting-control">Scale</label>
+      <div id="control-slot"></div>
+      <div class="buttons"><button type="button" id="cancel-settings" class="small-button">Cancel</button><button class="primary" type="submit">Apply</button></div>
+    </form>
+  </dialog>
+  <script type="module" src="preview.mjs"></script>
+</body>
+</html>
