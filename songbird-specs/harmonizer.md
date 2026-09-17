@@ -1,7 +1,7 @@
 # Songbird: Harmonizer
 
 **Status:** Draft v0.1 for team planning  
-**Updated:** 2026-09-14  
+**Updated:** 2026-09-16  
 **Related specs:** [Shell and shared contract](shell.md) | [Chord Finder](chord-finder.md)
 
 ## 1. Purpose and MVP boundary
@@ -28,6 +28,15 @@ The input is one clean melodic line. The output is the original lead plus up to 
 Future: live harmonization, separating a melody from a mixed recording, independent counterpoint rhythms, generated sung vocals, WAV/audio-guide export, full score engraving, unrestricted timing, and DAW plugin integration.
 
 The working phrase is the same shared range of up to eight bars used by the Chord Finder.
+
+**Implementation status:** the Shell now provides stage navigation, shared
+schemas, and local recovery boundaries. Transcription, melody editing, harmony
+generation, playback, and MIDI export are not implemented. The approved internal
+timing convention remains centralized in the [Shell contract](shell.md#5-timing-rules).
+
+The approved [Shell dashboard and appearance](shell.md#3-user-experience) provide
+this tool's compact launcher, remembered stage, and browser-preferred light/dark
+theme. Returning home or visiting learning does not discard the melody workspace.
 
 ## 2. User flow
 

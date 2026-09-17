@@ -1,7 +1,7 @@
 # Songbird: Shell and shared song contract
 
 **Status:** Draft v0.1 for team planning  
-**Updated:** 2026-09-14  
+**Updated:** 2026-09-16  
 **Related specs:** [Chord Finder](chord-finder.md) | [Harmonizer](harmonizer.md)
 
 ## 1. Purpose and ownership
@@ -23,6 +23,15 @@ The [Chord Finder](chord-finder.md) builds the backing progression. The [Harmoni
 
 These documents specify intended behavior. They do not claim the current mockup implements it, or that transcription quality or performance has been established.
 
+**Implementation baseline approved 2026-09-15:** the first browser Shell uses
+React/TypeScript/Vite, shared `song-core` contracts, and a Dexie local-store
+adapter. Naming, navigation, recovery, and capability contracts are implemented.
+The audio-dependent and musical-tool acceptance scenarios are not yet complete.
+
+**Dashboard update approved 2026-09-16:** the compact tool launcher and
+browser-preferred light/dark themes are implemented on that foundation.
+They do not change the version-1 song schema or implement the musical tools.
+
 ## 2. MVP scope
 
 | ID | Required behavior |
@@ -35,6 +44,7 @@ These documents specify intended behavior. They do not claim the current mockup 
 | SH-06 | Make media capture, analysis, musical timing, and playback reusable capabilities instead of separate implementations in each tool. |
 | SH-07 | Preserve user work across musical-context changes and asynchronous processing. |
 | SH-08 | Keep educational help optional, contextual, and usable without an external video. |
+| SH-09 | Follow the browser's light/dark preference with readable, keyboard-accessible Shell surfaces, including live preference changes. |
 
 Future: accounts, cloud saving, a library of projects, multiple independent song sections, collaboration, full-song arranging, a full DAW, and native/plugin packaging.
 
@@ -46,7 +56,43 @@ Local autosave is recovery for one song, not cloud backup. Clearing browser stor
 
 Create an empty current song using an "Untitled song" display name. Let the user rename it and choose either tool. A blank name should retain an understandable untitled display state, not prevent music creation.
 
+The shared header presents a visibly outlined "Song name" field and a pencil
+cue without requiring hover. Rename directly from the dashboard or any module;
+clicking the field or pencil area and keyboard editing use the same inline
+input. Changes follow the existing autosave flow, without a dialog or separate
+save button. Read-only tabs show the name in a disabled field without the
+editing cue.
+
 The user can start with audio in either tool, or with a starting key in the Chord Finder. Timing is established when arranging or aligning the melody, not as a gate before capture.
+
+### Dashboard and appearance
+
+The home route shows compact square Harmonizer and Chord Finder tiles with
+centered icons, names, and short blurbs. Do not add a visible dashboard heading,
+subtitle, arrows, or repeated "Open workspace" labels. Keep the editable song
+name in the shared header, with a secondary learning link below the tiles.
+Autosave remains quiet. Relevant recovery and read-only notices remain visible
+on the dashboard as well as inside tools.
+
+Use the approved bright light and charcoal dark themes, with lime/cyan tool
+accents and controlled glow. Readable text and visible keyboard focus take
+precedence over bright accent colors. Respect reduced-motion preferences.
+Appearance is browser-driven, not a musical document edit or persisted song
+preference. A manual appearance control is deferred.
+
+Opening `/` always shows the dashboard with the restored song. Choosing a tool
+opens its remembered stage; clicking the Songbird logo returns home without
+resetting either tool. Refreshing an explicit tool or lesson URL keeps that route.
+
+Inside modules, the sidebar contains only a dashboard return arrow and shared
+musical context. Do not repeat global tool and learning navigation there. Use a
+compact, borderless hamburger toggle with an accessible label and interaction
+target. On desktop, the panel can collapse to a narrow rail with the home arrow
+and hamburger still available. On mobile, the hamburger folds context away;
+context is initially closed and the home arrow remains available. Desktop and
+mobile expansion states are independent local UI state. Collapsing context does
+not change the song, its revision, or its remembered stage. Stage navigation and
+contextual handoffs/help remain in the workspace.
 
 ### Moving between tools
 
@@ -55,6 +101,12 @@ Returning to a tool restores its current stage and unfinished edits. The Harmoni
 An uploaded recording, selected phrase, confirmed key, and timing choices should not have to be entered twice. Unreviewed analysis remains visibly unreviewed when another tool uses it.
 
 Learning pages retain the originating tool and stage. Returning from help must not reset the project or restart playback unexpectedly.
+
+Learning opened from the dashboard returns to the dashboard instead. The app
+carries that origin in validated browser-history state through topic changes
+and refresh. Contextual help captures the visible tool/stage, including in a
+read-only tab. Direct lesson entry without history state falls back to the saved
+tool origin. No new dashboard value is added to the persisted song workspace.
 
 ### Replacing the current song
 
@@ -102,9 +154,13 @@ Confidence is optional. Do not invent percentages or treat note amplitude as a c
 
 ## 5. Timing rules
 
-### Proposed timing representation
+### Approved implementation timing baseline
 
-Use integer musical ticks with **480 ticks per quarter note**. A sixteenth note is **120 ticks**. Preserve source timings in seconds separately.
+The initial implementation uses integer musical ticks with **480 ticks per quarter
+note**, approved as an engineering convention rather than a product requirement.
+A sixteenth note is **120 ticks**. Preserve source timings in seconds separately.
+`packages\song-core\src\timing.ts` owns the constants and conversions; playback
+and export adapters must explicitly use or convert these units.
 
 | Meter | Ticks per bar | Sixteenth-note positions per bar | Half-bar duration | Displayed tempo pulse |
 |---|---:|---:|---:|---|
@@ -140,6 +196,10 @@ Chord boundaries and durations use half-bar increments under the current meter. 
 
 The Shell document owns these interface definitions, not necessarily their implementation. Capture, analysis, playback, and musical logic can live in a shared core used by both tools.
 
+The initial TypeScript capability interfaces are in `packages\song-core`.
+Their existence does not imply that capture, analysis, generation, playback, or
+export is implemented. Feature entry surfaces currently identify those limits.
+
 | Capability | Inputs | Outputs / guarantees |
 |---|---|---|
 | Capture/import | User-selected file or an explicit microphone action | A local source reference or a visible error. Accept WAV/MP3 uploads; negotiate supported browser recording formats internally. |
@@ -156,9 +216,21 @@ Audio capture does not imply permission to send audio to a server. No remote aud
 
 ### Local saving
 
-Persist source references/blobs, selections, confirmed music, recoverable drafts, settings, and the current tool/stage. A blob-capable local store such as IndexedDB is the proposed approach; do not put encoded recordings into small string-only storage.
+Persist source references/blobs, selections, confirmed music, recoverable drafts,
+settings, and the current tool/stage. The approved baseline is Dexie over
+IndexedDB, with separate snapshot and audio stores. Do not put encoded recordings
+into small string-only storage. Schema version 1 is the first implementation;
+unsupported/corrupt schemas must remain intact for recovery rather than being
+reset. Saved-revision acknowledgements live in the Shell coordinator, not in a
+document edit that would recursively trigger another save.
 
-Show saving, saved, and save-failed states. "Saved" means the current revision has actually been committed to local storage. If saving fails, retain the in-memory work, explain that recovery after closing is unavailable, and keep relevant exports accessible.
+Autosave runs quietly: do not show routine saving/saved labels or repeated
+local-device, backup, and no-upload reminders in the normal workspace. Track
+save states internally; a successful save still means the current revision has
+actually been committed to local storage. If saving fails, retain the in-memory
+work, visibly explain that the latest changes may be lost after closing, and
+keep recovery actions and relevant exports accessible. Read-only and recovery
+warnings remain visible when relevant.
 
 Refresh restores the latest saved work, including an unconfirmed melody draft. A processing job that cannot resume must be shown as interrupted/retryable, not falsely complete. Unlimited undo history across browser restarts is not an MVP promise.
 
@@ -174,7 +246,11 @@ Refresh restores the latest saved work, including an unconfirmed melody draft. A
 | A layout removes a manually edited voice | Make the removal explicit before applying; preserve a rollback route. |
 | A generated result cannot satisfy hard constraints | Explain the constraint and possible changes. Do not silently return fewer parts or transpose the lead. |
 
-For the initial demo, assume one active editing tab. The team must choose how to detect and warn about concurrent tabs before broader use.
+The initial implementation holds an exclusive Web Lock for the current song.
+Additional tabs are read-only and may retry after the editing tab closes.
+Writes also check the stored project ID and revision inside the transaction.
+Browsers without lock support cannot become writers. Releasing a tab or
+returning from the browser's page cache must not leave a stale editing lease.
 
 ## 8. Learning contract
 
@@ -224,7 +300,7 @@ Learning links and external videos must not discard a draft. Audio starts throug
 
 | ID | Scenario and expected outcome |
 |---|---|
-| SH-A1 | Start in either tool, rename the song, navigate away and back: the name and work remain. |
+| SH-A1 | From the dashboard or either tool, identify the outlined song-name field and pencil without hovering. Rename inline with a pointer or keyboard, navigate away, and reopen: the name and work remain. Read-only tabs retain the name without showing an active editing cue. |
 | SH-A2 | Refresh after a successful save: source, selected phrase, melody/chords/parts, settings, and stage are restored. |
 | SH-A3 | Capture in Chord Finder, then open Harmonizer: the same source and analysis draft are available without re-uploading. |
 | SH-A4 | Skip chords in Harmonizer: timing and key can be confirmed and key/scale-only generation remains available. |
@@ -233,7 +309,10 @@ Learning links and external videos must not discard a draft. Audio starts throug
 | SH-A7 | Change a chord after editing a harmony: the harmony is marked stale but the edit is retained. |
 | SH-A8 | Compare 3/4 and 6/8: subdivisions, beat accents, tempo labels, and exported timing agree with the timing table. |
 | SH-A9 | Open a lesson or an unavailable external video and return: the song remains usable and unchanged. |
-| SH-A10 | Local storage fails: the UI does not show "Saved"; in-memory work and an explicit recovery explanation remain. |
+| SH-A10 | Ordinary edits persist without routine saved/saving labels or storage/privacy reminders. If local storage fails, in-memory work and a visible, accessible recovery explanation remain. A successful retry persists the edits and returns to the quiet workspace. |
+| SH-A11 | Reopen `/`, choose either dashboard tile, then return home: the compact grid is shown, the selected tool restores its stage, and no work is reset. Dashboard learning returns home; contextual learning returns to its visible tool/stage. |
+| SH-A12 | Switch the browser's color preference while using the dashboard, tools, or help: light/dark surfaces update without editing the song. Text, controls, keyboard focus, and recovery notices remain readable at desktop and mobile widths. |
+| SH-A13 | Use the compact hamburger to collapse and expand the module sidebar with a pointer or keyboard: the desktop workspace gains space, shared context can be recovered, and the home arrow remains available. On mobile, the same hamburger treatment folds context away without hiding the home control. The visible icon stays compact while its interaction target remains accessible. Song data and remembered stages are unchanged. |
 
 ## 11. Open decisions and handoff
 
@@ -244,7 +323,7 @@ Learning links and external videos must not discard a draft. Audio starts throug
 | OPEN-RHYTHM | Exact meter-change remapping policy and practical tempo limits | Shared-core and musical-logic contributors |
 | OPEN-CHORDS | Chord quality vocabulary beyond the proposed major/minor triad baseline | Chord Finder and musical-logic contributors |
 | OPEN-HARMONY | Exact style behavior, voice-range defaults, and constraint priorities | Harmonizer and musical-logic contributors |
-| OPEN-STORAGE | Storage schema/migrations, quota behavior, and concurrent-tab protection | Shell contributor |
+| OPEN-STORAGE | Initial schema, error handling, and single-writer baseline implemented; future migrations and broader browser qualification remain | Shell contributor |
 | OPEN-LEARNING | Review the original explanations/examples and curate optional existing-creator video links | Product/learning-content contributor |
 
 Agree the shared data and timing contract before implementing separate screens. Use the two tool specs for feature-specific behavior. Keep changes to shared fields and dependency rules synchronized across all three documents.

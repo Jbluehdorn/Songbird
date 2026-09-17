@@ -1,7 +1,7 @@
 # Songbird: Chord Finder
 
 **Status:** Draft v0.1 for team planning  
-**Updated:** 2026-09-14  
+**Updated:** 2026-09-16  
 **Related specs:** [Shell and shared contract](shell.md) | [Harmonizer](harmonizer.md)
 
 ## 1. Purpose and MVP boundary
@@ -11,6 +11,15 @@ The Chord Finder is the place to build and hear a chord progression for the curr
 It supports two entry paths: bring a melodic recording and explore its likely key, or choose a starting key directly. The result is a timed progression that other tools can use without re-entry.
 
 Use "Chord Finder" as the tool name, but make the current action clear in the UI: build chords, set their duration, and hear the sequence.
+
+**Implementation status:** the Shell now provides this tool's entry/stage routes
+and shared recovery. Capture, key selection/analysis, chord editing, and audition
+are not implemented. The approved shared timing baseline is defined only in the
+[Shell timing contract](shell.md#5-timing-rules).
+
+The approved [Shell dashboard and appearance](shell.md#3-user-experience) provide
+this tool's compact launcher, remembered stage, and browser-preferred light/dark
+theme. Returning home or visiting learning does not discard the progression workspace.
 
 ### Scope
 
@@ -160,7 +169,8 @@ Use the entity definitions in the [shared song contract](shell.md#4-shared-song-
 
 ### Concrete output example
 
-This is a contract fragment for a two-bar progression in 4/4 using the proposed 480-tick quarter note.
+This is a contract fragment for a two-bar progression in 4/4 using the approved
+internal convention of 480 ticks per quarter note.
 
 ```json
 {

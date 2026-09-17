@@ -4,6 +4,64 @@
 **Original conversation:** [Harmony generator](ghapp://sessions/592e9cd2-3891-433c-9e62-f86453abd416)  
 **Initial project directory:** `C:\Songbird`
 
+## Publication authorization: 2026-09-17
+
+The user authorized committing the current Shell and documentation and publishing
+them to [Jbluehdorn/Songbird](https://github.com/Jbluehdorn/Songbird) as the initial
+`main` branch. Preserve the existing commit history; generated reference artifacts
+remain excluded from the current tracked tree. Earlier publication restrictions
+below describe the authorization available at those earlier milestones, not a
+restriction on this approved initial push.
+
+## Dashboard and repository update: 2026-09-16
+
+The user approved the compact dashboard and both neon light/dark mockups, then
+authorized their implementation on the existing Shell foundation. The home
+route now shows centered Harmonizer and Chord Finder icon/name/blurb tiles.
+Current-song naming remains in the header. Tool stages
+and drafts are retained, and learning returns to its dashboard or tool origin.
+
+Appearance follows the browser preference, with lime/cyan accents on bright
+light surfaces or charcoal dark surfaces. A manual appearance setting is
+deferred. The mockup's forced-theme review links are not application settings.
+This work does not add musical capabilities or change the stored song schema.
+
+The module sidebar was subsequently simplified to a dashboard return arrow and
+shared song context. A compact, borderless hamburger toggles the narrow desktop
+rail or mobile context without modifying the song. Routine saved/saving labels
+and repeated local-device/privacy reminders have been removed; autosave,
+actionable failures, recovery controls, and read-only warnings remain. Global
+tool/learning navigation stays on the dashboard; stage navigation and contextual
+links stay inside modules.
+
+Git now tracks Markdown docs, source code/scripts, configuration, and dependency
+manifests/lockfiles. Generated readers, decks, slide data/images, archives, and
+screenshots are untracked and ignored but retained locally. New clones/worktrees
+must rebuild those optional reference outputs. `AGENTS.md` is the maintained
+decision log. No remote repository or publication was authorized.
+
+## Implementation update: 2026-09-15
+
+The user approved the architecture proposal and authorized the first Shell
+foundation milestone. `apps\web`, `packages\song-core`, and
+`packages\local-store` now implement the React/TypeScript/Vite Shell, canonical
+schemas and timing helpers, revision-checked commands, Dexie recovery, and a
+single-writer browser lease. See `README.md` for commands and package ownership.
+
+The Shell can name/save/reopen one song, navigate tool stages and learning pages,
+and expose recovery failures without pretending to have saved. Source blobs and
+drafts have persistence contracts, but capture, transcription, musical editors,
+generation, sampled playback, full learning activities, and MIDI export remain
+unimplemented. Future stages say so explicitly.
+
+480 ticks per quarter was approved as an **engineering convention**, not a
+product requirement. The source timing remains separate and the editable grid
+remains sixteenths. The three specifications still distinguish full MVP behavior
+from proposals and unresolved decisions.
+
+The original handoff below is historical context, not a new instruction to stop
+at project setup. No publishing, remote repository, or automation was authorized.
+
 ## Why this project exists
 
 The user asked to move from a long workshop chat into a project where multiple agents can work. The available tools could not reassign the original chat itself. The user approved creating a new local Git-backed project at `C:\Songbird`, copying the specifications, kickoff deck, and mockup, and creating a project session with a context handoff.
@@ -47,25 +105,36 @@ After receiving the specs, the user questioned the 480-tick timing convention. T
 
 The actual requirement is a consistent musical timeline across tools and exports. A sixteenth-step internal model with conversion at export is also possible. The exact timing representation should follow the implementation/library decision.
 
-The existing v0.1 Markdown still proposes 480 ticks and labels it as a proposed contract. This transfer preserves those files unchanged. Do not elevate that number into a mandatory product requirement.
+At the original handoff, the v0.1 Markdown still proposed 480 ticks. The later
+Shell approval adopted that convention deliberately; see the implementation
+update above. Do not elevate it into a mandatory product requirement.
 
 ## Existing artifacts and limitations
 
 ### Specifications
 
-Three linked editable Markdown documents, generated HTML readers, and a three-document ZIP are in `songbird-specs`. They cover flows, inputs/outputs, musical timing, recovery, education, acceptance scenarios, and open decisions.
+Three linked editable Markdown documents and their build script are in
+`songbird-specs`. Generated HTML readers and the three-document ZIP remain local,
+ignored outputs. They cover flows, inputs/outputs, musical timing, recovery,
+education, acceptance scenarios, and open decisions.
 
 No specific educational videos were selected.
 
 ### Kickoff deck
 
-The current deck has seven slides with editable PowerPoint content, presenter notes, PDF, and rendered slide images. Slides 4-5 cover the Harmonizer; slides 6-7 cover the wider chord-tool vision and the demo minimum.
+The source script builds seven slides with editable PowerPoint content, presenter
+notes, PDF, and rendered slide images. Existing generated copies are kept locally,
+not in Git. Slides 4-5 cover the Harmonizer; slides 6-7 cover the wider chord-tool
+vision and the demo minimum.
 
 The deck is broader product-alignment material and predates the latest detailed specifications. The term "Chord Workshop" in the deck refers to the current Chord Finder tool.
 
 ### Earlier mockup
 
-The `second-voice-mockup` directory contains four editable SVG screens, a Figma-import ZIP, a local interactive demo, and screenshots. It still uses the earlier working title "Second Voice."
+The `second-voice-mockup` directory retains source for the local interactive
+demo and four SVG screens. Generated artboards, the archived Figma-import ZIP,
+and screenshots are local artifacts rather than versioned source. It still uses
+the earlier working title "Second Voice."
 
 It demonstrates example notes, drag editing, mute/solo, navigation, and simple synthesis. It does not implement real capture, transcription, harmony generation, or MIDI/audio export. Its original setup-first workflow is superseded by the melody-first direction.
 
@@ -77,13 +146,13 @@ The market is not empty: the earlier discontinued vielklang product, Band-in-a-B
 
 ## Open engineering and content decisions
 
-- Application framework, shared-core boundaries, repository/package structure, and tooling.
+- Framework, initial package boundaries, and Shell tooling are now resolved as described above. Future engine implementations remain separate work.
 - Local versus server transcription, privacy, browser/device support, recording codecs, upload limits, and measured correction effort.
-- Internal musical timing resolution, exact meter-change remapping, and supported tempo ranges.
+- Exact meter-change remapping and supported tempo ranges. Internal resolution is now the approved 480-tick convention.
 - Licensed guitar/piano assets and default playback voicings.
 - Chord-quality vocabulary beyond the proposed major/minor triad baseline.
 - Exact arrangement-style behavior, voice ranges, musical constraint priorities, and useful evaluation phrases.
-- Local storage schema, migrations, quota errors, and concurrent-tab handling.
+- Future storage migrations and broader browser qualification. The first schema, visible quota/error behavior, and single-writer handling are implemented.
 - Reviewed educational examples and optional external video selection.
 
 The next implementation planning task should resolve the shared contracts before assigning independent agents to the Shell, Chord Finder, and Harmonizer.

@@ -1,0 +1,176 @@
+:root {
+  color-scheme: light;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--ground);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --ink: #202735;
+  --muted: #505f70;
+  --accent: #427500;
+  --accent-hover: #2e5600;
+  --accent-contrast: #fff;
+  --soft: #e9edf4;
+  --line: #d9deea;
+  --paper: #fff;
+  --header: #fff;
+  --ground: #f5f6fa;
+  --control-line: #8390a1;
+  --disabled-ink: #586474;
+  --disabled-surface: #edf0f6;
+  --disabled-line: #c4ccd8;
+  --subtle-surface: #f9fafc;
+  --notice-surface: #edf5e2;
+  --notice-line: #729347;
+  --danger: #8c3529;
+  --danger-ink: #742e24;
+  --danger-surface: #fff4f0;
+  --danger-line: #bc806c;
+  --skeleton: #dce3ee;
+  --selection: #d3f8a3;
+  --selection-ink: #21350e;
+  --tile-line: #649336;
+  --tile-hover: #f3ffe5;
+  --tile-pressed: #e5ffc6;
+  --glow: rgba(133, 228, 32, 0.3);
+  --glow-strong: rgba(133, 228, 32, 0.5);
+  --icon-glow: rgba(148, 241, 41, 0.78);
+}
+
+[data-tool='chord-finder'] {
+  --accent: #006d85;
+  --accent-hover: #005468;
+  --tile-line: #2389a1;
+  --tile-hover: #eafdff;
+  --tile-pressed: #d8f7ff;
+  --glow: rgba(0, 189, 227, 0.22);
+  --glow-strong: rgba(0, 189, 227, 0.4);
+  --icon-glow: rgba(0, 189, 227, 0.65);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ink: #f1f4f8;
+    --muted: #b2bac8;
+    --accent: #b6ff5c;
+    --accent-hover: #d9ffad;
+    --accent-contrast: #16200d;
+    --soft: #1c222b;
+    --line: #30353f;
+    --paper: #191c22;
+    --header: #13151a;
+    --ground: #0d0e11;
+    --control-line: #647180;
+    --disabled-ink: #a5afbd;
+    --disabled-surface: #222730;
+    --disabled-line: #414a57;
+    --subtle-surface: #171b21;
+    --notice-surface: #242e1d;
+    --notice-line: #718d4e;
+    --danger: #ffbaa6;
+    --danger-ink: #ffd2c7;
+    --danger-surface: #351d1b;
+    --danger-line: #9b6154;
+    --skeleton: #303845;
+    --selection: #365122;
+    --selection-ink: #eefedc;
+    --tile-line: #547436;
+    --tile-hover: #252b22;
+    --tile-pressed: #263421;
+    --glow: rgba(182, 255, 92, 0.16);
+    --glow-strong: rgba(182, 255, 92, 0.3);
+    --icon-glow: rgba(182, 255, 92, 0.75);
+  }
+
+  [data-tool='chord-finder'] {
+    --accent: #5ee7ff;
+    --accent-hover: #b0f4ff;
+    --accent-contrast: #082229;
+    --tile-line: #397e8d;
+    --tile-hover: #192931;
+    --tile-pressed: #203642;
+    --glow: rgba(94, 231, 255, 0.16);
+    --glow-strong: rgba(94, 231, 255, 0.3);
+    --icon-glow: rgba(94, 231, 255, 0.75);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+}
+button,
+input {
+  font: inherit;
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+a:hover {
+  color: var(--accent-hover);
+}
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+input:focus-visible {
+  outline-offset: 2px;
+}
+button,
+input,
+a {
+  touch-action: manipulation;
+}
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+h1,
+h2 {
+  text-wrap: balance;
+}
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-weight: 650;
+}
+h2 {
+  font-size: 1.125rem;
+  line-height: 1.4;
+  font-weight: 650;
+}
+p {
+  line-height: 1.65;
+  max-width: 70ch;
+}
+::selection {
+  background: var(--selection);
+  color: var(--selection-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

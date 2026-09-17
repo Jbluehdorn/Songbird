@@ -6,6 +6,23 @@
 # Dependencies and transient output.
 node_modules/
 *.log
-songbird-kickoff/layout-report.json
 Thumbs.db
 .DS_Store
+dist/
+test-results/
+playwright-report/
+coverage/
+*.tsbuildinfo
+
+# Generated reference artifacts stay local; their source scripts are versioned.
+/songbird-specs/preview/
+/songbird-specs/Songbird-Specifications.zip
+/songbird-kickoff/Songbird-Team-Kickoff.pdf
+/songbird-kickoff/Songbird-Team-Kickoff.pptx
+/songbird-kickoff/slides/
+/songbird-kickoff/slides.json
+/songbird-kickoff/contact-sheet.png
+/songbird-kickoff/layout-report.json
+/second-voice-mockup/exports/
+/second-voice-mockup/*-desktop.png
+/second-voice-mockup/preview-mobile.png

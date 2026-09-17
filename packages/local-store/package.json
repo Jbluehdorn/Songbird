@@ -1,0 +1,11 @@
+{
+  "name": "@songbird/local-store",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@songbird/song-core": "*",
+    "dexie": "4.4.5"
+  }
+}
