@@ -3,9 +3,9 @@
 A practical songwriting platform: bring a musical idea, develop it into a song, and learn the basic theory behind the choices.
 
 **Current state:** an implemented dashboard Shell with automatic light/dark
-appearance, plus planning specifications and source for the earlier reference
-artifacts. Musical capture, analysis, editors, generation, sampled playback, and
-MIDI export are not implemented yet.
+appearance and active product/engineering specifications. Musical capture,
+analysis, editors, generation, sampled playback, and MIDI export are not
+implemented yet.
 
 ## Run the Shell
 
@@ -108,46 +108,32 @@ static host must provide an SPA fallback for tool and learning routes.
 | `songbird-specs\chord-finder.md` | Chord Finder MVP flows, editing, playback, education, and inputs/outputs. |
 | `songbird-specs\harmonizer.md` | Melody review, harmony generation, editing, education, and MIDI export. |
 | `songbird-specs\Build-Specs.ps1` | Source script for local HTML readers and a shareable specification ZIP. |
-| `songbird-kickoff\Build-SongbirdDeck.ps1` | Source script for the kickoff deck, presenter notes, PDF, and slide renders. |
-| `second-voice-mockup\` | Earlier UI exploration under the old working name; not the current product specification. |
 
-Git tracks documentation and source, including configuration and dependency
-lockfiles. Generated HTML readers, PowerPoint/PDF decks, archives, screenshots,
-and slide data/renders are ignored. Existing generated copies stay on disk; this
-policy does not delete local artifacts or rewrite repository history.
+Git tracks active application and shared-package source, tests, development and
+deployment configuration, dependency lockfiles, specifications, and contributor
+documentation. Generated readers, archives, screenshots, and build/test output
+are ignored.
 
-New clones and worktrees contain the source, not those generated copies.
-Generate the reference artifacts before serving their optional previews.
-Generated files remain usable after the temporary preview servers stop.
+The historical `second-voice-mockup` and `songbird-kickoff` directories are not
+part of the active development or deployment tree. Any existing local copies
+are retained and ignored; they are not included in new clones. Removing them
+from the current tree does not rewrite repository history.
 
-The original workshop history remains in the [Harmony generator chat](ghapp://sessions/592e9cd2-3891-433c-9e62-f86453abd416). This project carries its files and an explicit context handoff; the chat itself was not moved or deleted.
+The original workshop history remains in the [Harmony generator chat](ghapp://sessions/592e9cd2-3891-433c-9e62-f86453abd416). `PROJECT-CONTEXT.md` retains the relevant handoff and decisions.
 
-## Optional local previews
+## Optional specification reader
 
-Run the relevant command from the root of this checkout. Each server prints its own loopback URL; old port numbers are not permanent.
-Generate the specification and deck outputs with the commands below first if
-they are not present. The earlier mockup server creates its SVG artboards on
-startup; its archived ZIP and screenshots are optional local artifacts.
-
-```powershell
-node '.\songbird-specs\serve.mjs'
-node '.\songbird-kickoff\serve.mjs'
-node '.\second-voice-mockup\server.mjs'
-```
-
-Use a separate terminal or session for each preview you want to leave running. These commands do not start the planned Songbird application.
-
-To refresh the specification reader and ZIP after editing the Markdown:
+Generate the specification reader and ZIP from the Markdown, then start the
+documentation server from the root of this checkout:
 
 ```powershell
 & '.\songbird-specs\Build-Specs.ps1'
+node '.\songbird-specs\serve.mjs'
 ```
 
-The specification renderer uses PowerShell's `ConvertFrom-Markdown`. Rebuilding the presentation requires installed Windows PowerPoint:
-
-```powershell
-& '.\songbird-kickoff\Build-SongbirdDeck.ps1'
-```
+The server prints its loopback URL. It is separate from the application server.
+New clones do not include the generated outputs; rerun the build script after
+editing the specifications. The renderer uses PowerShell's `ConvertFrom-Markdown`.
 
 ## Working in parallel
 
@@ -162,6 +148,6 @@ respective feature slices.
 The compact dashboard, automatic neon light/dark themes, and source-only Git
 policy were approved on 2026-09-16. `AGENTS.md` records those decisions.
 
-No remote repository has been configured and nothing has been published. Future
-independent implementation work still needs explicit assignment and isolated
+The development repository is [Jbluehdorn/Songbird](https://github.com/Jbluehdorn/Songbird).
+Independent implementation work still needs explicit assignment and isolated
 worktrees; it does not follow automatically from the package plan.

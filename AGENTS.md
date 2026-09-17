@@ -27,6 +27,11 @@ for detailed musical and data contracts.
   current work and publishing it to `https://github.com/Jbluehdorn/Songbird`
   on `main`. Preserve the existing commit history and source-only current tree.
   This does not authorize unrelated publications, pull requests, or automations.
+- **2026-09-17 - Active repository scope:** keep only active development and
+  deployment code, tooling, tests, specifications, and contributor documentation.
+  Remove `second-voice-mockup` and `songbird-kickoff` from Git tracking; preserve
+  and ignore any local copies. Neither directory is an application or build
+  dependency. The user approved committing and pushing this cleanup to `main`.
 - **2026-09-16 - Dashboard:** the approved home screen has compact square
   Harmonizer and Chord Finder tiles with centered icons, names, and short blurbs.
   Use "Add harmony to your melody." and "Find a progression that fits."
@@ -88,8 +93,7 @@ reminders.
 
 ## Important caveats
 
-- `second-voice-mockup` is an earlier interaction prototype. Its branding, setup-first flow, and example playback are not the authoritative specification.
-- The kickoff deck calls the chord tool "Chord Workshop"; the current specifications call it "Chord Finder."
+- Archived prototypes and presentations are historical context, not authoritative specifications or active development inputs.
 - 480 ticks per quarter note is the approved initial implementation convention, not a product requirement. Use the shared timing helpers and explicitly configure or convert playback/export units; update all related contracts consistently if that convention changes.
 - No measured transcription accuracy, latency, user demand, or finished music-generation capability is established by the current artifacts.
 - Do not send source recordings to remote services without a separately agreed processing/privacy design.
@@ -100,10 +104,12 @@ reminders.
 Keep the three Markdown specifications cross-linked and consistent. Their ZIP and HTML readers can be refreshed with `songbird-specs\Build-Specs.ps1`.
 
 Generated artifacts are ignored and untracked, not removed from local storage.
-New clones and worktrees must generate reference readers/decks before serving
-those previews. Source-controlled application assets are allowed; do not use
+New clones and worktrees must generate specification readers before serving
+the documentation preview. Source-controlled application assets are allowed; do not use
 blanket image or HTML exclusions that would hide future source assets.
 
-Use the existing source scripts for changes to the presentation or mockup, and distinguish generated examples from implemented functionality. Do not change the old mockup or deck merely to match a new implementation task unless it is within that task's scope.
+The historical prototype and kickoff directories are excluded from the repository.
+Local tooling may ignore those directories when retained on disk, but active
+application, test, build, and deployment code must not depend on them.
 
 Do not publish, push, create remote repositories, or add automations unless the user asks.

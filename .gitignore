@@ -14,15 +14,10 @@ playwright-report/
 coverage/
 *.tsbuildinfo
 
-# Generated reference artifacts stay local; their source scripts are versioned.
+# Generated specification readers and archives stay local.
 /songbird-specs/preview/
 /songbird-specs/Songbird-Specifications.zip
-/songbird-kickoff/Songbird-Team-Kickoff.pdf
-/songbird-kickoff/Songbird-Team-Kickoff.pptx
-/songbird-kickoff/slides/
-/songbird-kickoff/slides.json
-/songbird-kickoff/contact-sheet.png
-/songbird-kickoff/layout-report.json
-/second-voice-mockup/exports/
-/second-voice-mockup/*-desktop.png
-/second-voice-mockup/preview-mobile.png
+
+# Historical prototype and presentation files are not active development inputs.
+/second-voice-mockup/
+/songbird-kickoff/

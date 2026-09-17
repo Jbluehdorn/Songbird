@@ -4,6 +4,14 @@
 **Original conversation:** [Harmony generator](ghapp://sessions/592e9cd2-3891-433c-9e62-f86453abd416)  
 **Initial project directory:** `C:\Songbird`
 
+## Active repository scope: 2026-09-17
+
+The user narrowed the repository to active development and deployment inputs:
+the application, shared packages, tests, configuration, product specifications,
+and contributor documentation. The historical `second-voice-mockup` and
+`songbird-kickoff` directories are excluded from Git. Existing local copies are
+preserved and ignored, but are not required by the app or available in new clones.
+
 ## Publication authorization: 2026-09-17
 
 The user authorized committing the current Shell and documentation and publishing
@@ -34,11 +42,11 @@ actionable failures, recovery controls, and read-only warnings remain. Global
 tool/learning navigation stays on the dashboard; stage navigation and contextual
 links stay inside modules.
 
-Git now tracks Markdown docs, source code/scripts, configuration, and dependency
-manifests/lockfiles. Generated readers, decks, slide data/images, archives, and
-screenshots are untracked and ignored but retained locally. New clones/worktrees
-must rebuild those optional reference outputs. `AGENTS.md` is the maintained
-decision log. No remote repository or publication was authorized.
+At this milestone, Git tracked Markdown docs, source code/scripts, configuration,
+and dependency manifests/lockfiles, while generated reference outputs remained
+local. The later active-repository cleanup also excluded the obsolete prototype
+and presentation sources. `AGENTS.md` is the maintained decision log. No remote
+repository or publication was authorized at this earlier milestone.
 
 ## Implementation update: 2026-09-15
 
@@ -120,23 +128,13 @@ education, acceptance scenarios, and open decisions.
 
 No specific educational videos were selected.
 
-### Kickoff deck
+### Archived design references
 
-The source script builds seven slides with editable PowerPoint content, presenter
-notes, PDF, and rendered slide images. Existing generated copies are kept locally,
-not in Git. Slides 4-5 cover the Harmonizer; slides 6-7 cover the wider chord-tool
-vision and the demo minimum.
-
-The deck is broader product-alignment material and predates the latest detailed specifications. The term "Chord Workshop" in the deck refers to the current Chord Finder tool.
-
-### Earlier mockup
-
-The `second-voice-mockup` directory retains source for the local interactive
-demo and four SVG screens. Generated artboards, the archived Figma-import ZIP,
-and screenshots are local artifacts rather than versioned source. It still uses
-the earlier working title "Second Voice."
-
-It demonstrates example notes, drag editing, mute/solo, navigation, and simple synthesis. It does not implement real capture, transcription, harmony generation, or MIDI/audio export. Its original setup-first workflow is superseded by the melody-first direction.
+The early "Second Voice" prototype and kickoff presentation are historical
+context only, outside the versioned development and deployment tree. Any local
+copies are ignored. Their setup-first interaction flow, "Chord Workshop" naming,
+and illustrative playback do not override the active melody-first specifications
+or demonstrate implemented musical capabilities.
 
 ### Research context
 

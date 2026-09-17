@@ -16,8 +16,9 @@ a known key, tempo, and chords are not prerequisites for bringing an idea.
 
 `PROJECT-CONTEXT.md` records the product handoff. The three documents in
 `songbird-specs` remain the canonical requirements; this file is a short UI
-context, not a replacement specification. The kickoff deck and Second Voice
-mockup are illustrative references, not evidence of completed musical features.
+context, not a replacement specification. Historical prototypes and presentation
+materials are excluded from the active repository and are not implementation
+evidence.
 
 ## Approved implementation boundary
 
